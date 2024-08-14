@@ -26,7 +26,12 @@ include(FetchContent)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/engine)
 
 add_executable(${PROJECT_NAME}
-    src/rlunicode.h
+    src/utils/lz4.c
+    src/utils/reader.c
+
+    src/unity/serialized_file.c
+    src/unity/bundle.c
+
     src/mdt.c
     src/main.c
 )

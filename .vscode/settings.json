@@ -2,6 +2,7 @@
     "files.associations": {
         "*.yarnproject": "jsonc",
         "string.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "*.tcc": "cpp"
     }
 }
