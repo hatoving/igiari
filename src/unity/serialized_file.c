@@ -183,6 +183,7 @@ igiari_unity_serizaliedfile igiari_unity_serizaliedfile_ReadFromData(unsigned ch
         file.object_infos[object_arr_count] = dummy;
         object_arr_count++;
     }
+    file.object_info_count = object_arr_count;
 
     if (file.header.version >= 11) {
         int script_count = (file.header.endianess == 0) ? *(int32_t*)file.ptr : igiari_utils_reader_ConvertUInt32_LEtoBE(*(int32_t*)file.ptr); file.ptr += 4;
@@ -244,4 +245,21 @@ igiari_unity_serizaliedfile igiari_unity_serizaliedfile_ReadFromData(unsigned ch
     }
     return file;
     //printf("[igiari, unity, sfile] externals_count: %s\n", file.user_info);
+}
+
+igiari_unity_objectinfo* igiari_unity_serializedfile_GetAllObjectsOfType(igiari_unity_serizaliedfile* file, int type, int* count) {
+    igiari_unity_objectinfo* info_array = malloc(sizeof(igiari_unity_objectinfo));
+    int info_count = 0;
+
+    for (int i = 0; i < file->object_info_count; i++)
+    {
+        if (file->object_infos[i].class_id == type) {
+            info_array = realloc(info_array, (info_count + 1) * sizeof(igiari_unity_objectinfo));
+            info_array[info_count] = file->object_infos[i];
+            info_count++;
+        }
+    }
+
+    *count = info_count;
+    return info_array;
 }

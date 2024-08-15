@@ -81,6 +81,7 @@ typedef struct {
     char* unity_version;
     char* user_info;
 
+    int object_info_count;
     igiari_unity_objectinfo* object_infos;
 
     int enable_type_tree;
@@ -92,4 +93,7 @@ typedef struct {
     int big_id_enabled;
 } igiari_unity_serizaliedfile;
 igiari_unity_serizaliedfile igiari_unity_serizaliedfile_ReadFromData(unsigned char* data, long offset);
+
+igiari_unity_objectinfo* igiari_unity_serializedfile_GetAllObjectsOfType(igiari_unity_serizaliedfile* file, int type, int* count);
+
 #endif

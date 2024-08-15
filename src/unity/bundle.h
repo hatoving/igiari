@@ -36,11 +36,16 @@ typedef struct {
     igiari_unity_bundle_header header;
 
     igiari_unity_bundle_storageblock* storage_blocks;
+
+    int directory_info_size;
     igiari_unity_bundle_node* directory_info;
 
     int uncompressed_data_len;
     unsigned char* uncompressed_data;
 } igiari_unity_bundle;
 igiari_unity_bundle igiari_unity_bundle_Read(char* path);
+
+unsigned char* igiari_unity_bundle_GetNodeDataByPath(igiari_unity_bundle* bundle, char* path);
+igiari_unity_bundle_node* igiari_unity_bundle_GetNodeByPath(igiari_unity_bundle* bundle, char* path);
 
 #endif

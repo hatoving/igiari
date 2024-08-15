@@ -87,6 +87,7 @@ igiari_unity_bundle igiari_unity_bundle_Read(char* path) {
     bundle.directory_info = malloc(node_count * sizeof(igiari_unity_bundle_node));
     int dir_info_count = 0;
 
+    bundle.directory_info_size = node_count;
     while (dir_info_count < node_count) {
         igiari_unity_bundle_node dummy;
 
@@ -143,4 +144,22 @@ igiari_unity_bundle igiari_unity_bundle_Read(char* path) {
     bundle.uncompressed_data = combined_block_data;
     fclose(bundle_file);
     return bundle;
+}
+
+igiari_unity_bundle_node* igiari_unity_bundle_GetNodeByPath(igiari_unity_bundle* bundle, char* path) {
+    for (int i = 0; i < bundle->directory_info_size; i++) {
+        if (strcmp(bundle->directory_info[i].path, path) == 0) {
+            return &bundle->directory_info[i];
+        }
+    }
+    return NULL;
+}
+
+unsigned char* igiari_unity_bundle_GetNodeDataByPath(igiari_unity_bundle* bundle, char* path) {
+    igiari_unity_bundle_node* node = igiari_unity_bundle_GetNodeByPath(bundle, path);
+    unsigned char* data = malloc((bundle->uncompressed_data_len - node->offset));
+    const char* ptr = bundle->uncompressed_data + node->offset;
+    memcpy(data, ptr, (bundle->uncompressed_data_len - bundle->directory_info[1].offset));
+
+    return data;
 }

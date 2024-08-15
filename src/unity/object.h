@@ -5,6 +5,12 @@
 #include "serialized_file.h"
 
 typedef struct {
+    uint32_t offset;
+    uint32_t size;
+    char* path;
+} igiari_unity_object_streaminginfo;
+
+typedef struct {
     uint32_t path_id;
     int* version;
     int build_type;

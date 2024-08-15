@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
     src/utils/lz4.c
     src/utils/reader.c
 
+    src/unity/texture2d.c
     src/unity/serialized_file.c
     src/unity/bundle.c
 

@@ -3,6 +3,9 @@
         "*.yarnproject": "jsonc",
         "string.h": "c",
         "stdint.h": "c",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "typeinfo": "c",
+        "array": "c",
+        "string": "c"
     }
 }
