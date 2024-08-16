@@ -105,7 +105,7 @@ igiari_unity_serizaliedfile igiari_unity_serizaliedfile_ReadFromData(unsigned ch
     igiari_unity_serizaliedfile file;
 
     file.ptr = data + offset;
-    printf("[igiari, unity, sfile] hex: %X\n", file.ptr);
+    //printf("[igiari, unity, sfile] hex: %X\n", file.ptr);
 
     file.header.metadata_size = igiari_utils_reader_ConvertUInt32_LEtoBE(*(int32_t*)file.ptr); file.ptr += 4;
     file.header.file_size = igiari_utils_reader_ConvertUInt32_LEtoBE(*(uint32_t*)file.ptr); file.ptr += 4;
@@ -135,7 +135,7 @@ igiari_unity_serizaliedfile igiari_unity_serizaliedfile_ReadFromData(unsigned ch
     }
 
     int32_t type_count = (file.header.endianess == 0) ? *(int32_t*)file.ptr : igiari_utils_reader_ConvertUInt32_LEtoBE(*(int32_t*)file.ptr); file.ptr += 4;
-    printf("[igiari, unity, sfile] type_count: %i\n", type_count);
+    //printf("[igiari, unity, sfile] type_count: %i\n", type_count);
     file.types = malloc(sizeof(igiari_unity_serizaliedfile_stype));
     int count = 0;
     for (int i = 0; i < type_count; i++)
@@ -149,7 +149,7 @@ igiari_unity_serizaliedfile igiari_unity_serizaliedfile_ReadFromData(unsigned ch
     file.big_id_enabled = 0;
 
     int32_t object_count = (file.header.endianess == 0) ? *(int32_t*)file.ptr : igiari_utils_reader_ConvertUInt32_LEtoBE(*(int32_t*)file.ptr); file.ptr += 4;
-    printf("[igiari, unity, sfile] object_count: %i, hex: %X\n", object_count, file.ptr);
+    //printf("[igiari, unity, sfile] object_count: %i, hex: %X\n", object_count, file.ptr);
     file.object_infos = malloc(sizeof(igiari_unity_objectinfo));
     int object_arr_count = 0;
     for (int i = 0; i < object_count; i++)
@@ -189,7 +189,7 @@ igiari_unity_serizaliedfile igiari_unity_serizaliedfile_ReadFromData(unsigned ch
         int script_count = (file.header.endianess == 0) ? *(int32_t*)file.ptr : igiari_utils_reader_ConvertUInt32_LEtoBE(*(int32_t*)file.ptr); file.ptr += 4;
         file.script_types = malloc(sizeof(igiari_unity_serializedfile_sobjectidentifier));
         int script_arr_count = 0;
-        printf("[igiari, unity, sfile] script_count: %i\n", script_count);
+        //printf("[igiari, unity, sfile] script_count: %i\n", script_count);
         for (int i = 0; i < script_count; i++)
         {
             igiari_unity_serializedfile_sobjectidentifier dummy;

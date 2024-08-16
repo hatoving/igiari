@@ -4,10 +4,18 @@
 #include <stdint.h>
 
 typedef struct {
+    int major;
+    int minor;
+    int revision;
+    char type_char;
+    int type_num;
+} igiari_unity_version;
+
+typedef struct {
     char* signature;
     uint32_t version;
 
-    char* unity_ver;
+    igiari_unity_version* unity_ver;
     char* unity_rev;
 
     uint64_t size;
@@ -43,9 +51,11 @@ typedef struct {
     int uncompressed_data_len;
     unsigned char* uncompressed_data;
 } igiari_unity_bundle;
-igiari_unity_bundle igiari_unity_bundle_Read(char* path);
+igiari_unity_bundle* igiari_unity_bundle_Read(char* path);
 
 unsigned char* igiari_unity_bundle_GetNodeDataByPath(igiari_unity_bundle* bundle, char* path);
 igiari_unity_bundle_node* igiari_unity_bundle_GetNodeByPath(igiari_unity_bundle* bundle, char* path);
+
+char* igiari_unity_bundle_impl_GetFileNameOfPath(char* path);
 
 #endif

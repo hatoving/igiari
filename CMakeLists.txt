@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME}
     src/utils/reader.c
 
     src/unity/texture2d.c
+    src/unity/audio_clip.c
+
     src/unity/serialized_file.c
     src/unity/bundle.c
 

@@ -51,19 +51,9 @@ igiari_unity_texture2d igiari_unity_texture2d_ReadFromPtr(const char* ptr) {
     memcpy(tex.info.path, ptr, string_len); ptr += string_len;
     //tex.info.path = igiari_utils_reader_ReadStringTilNull_FromPointer(ptr, &bytes_read); ptr += bytes_read;
 
-    printf("W/H: {%s}\n", tex.info.path);
+    //printf("W/H: {%s}\n", tex.info.path);
 
     return tex;
-}
-
-const char* get_filename(const char* path) {
-    const char* last_slash = strrchr(path, '/');
-
-    if (last_slash == NULL) {
-        return path;
-    }
-    
-    return last_slash + 1;
 }
 
 igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexture2DsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read) {
@@ -87,29 +77,32 @@ igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexture2DsFromNode(igiari_u
         ptr = starting_ptr + object_infos[i].byte_start;
         uint32_t string_len = *(uint32_t*)ptr; ptr += 4;
 
-        char name[string_len];
+        char* name = (char*)malloc(string_len + 1);
         memcpy(name, ptr, string_len); ptr += string_len;
-
-        printf("[igiari, unity, tex2d] name: %s, len: %i\n", name, string_len);
+        name[string_len] = '\0';
+        //printf("[igiari, unity, tex2d] string size: %i. actual: %i\n", strlen(name), string_len);
 
         uintptr_t addr = (uintptr_t)ptr;
         addr = (addr + 3) & ~((uintptr_t)3);
         ptr = (const char*)addr;
 
         tex = igiari_unity_texture2d_ReadFromPtr(ptr);
-        tex.name = name;
-
-        ptr = bundle->uncompressed_data + (igiari_unity_bundle_GetNodeByPath(bundle, get_filename(tex.info.path))->offset + tex.info.offset);
+        ptr = bundle->uncompressed_data + (igiari_unity_bundle_GetNodeByPath(bundle, igiari_unity_bundle_impl_GetFileNameOfPath(tex.info.path))->offset + tex.info.offset);
 
         tex.data = malloc(tex.info.size);
         memcpy(tex.data, ptr, tex.info.size);
 
-        printf("[igiari, unity, tex2d] data_size: %i\n", tex.info.size);
+        tex.name = name;
+        //printf("[igiari, unity, tex2d] data_size: %i\n", tex.info.size);
 
         tex_array = realloc(tex_array, (tex_count + 1) * sizeof(igiari_unity_texture2d));
         tex_array[tex_count] = tex;
         tex_count++;
+        
+        free(name);
     }
+
+    free(object_infos);
 
     *tex_read = tex_count;
     return tex_array;
@@ -117,10 +110,10 @@ igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexture2DsFromNode(igiari_u
 
 igiari_unity_texture2d* igiari_unity_texture2d_GetTexture2DByName(igiari_unity_texture2d* array, int size, char* name) {
     for (int i = 0; i < size; i++) {
-        if (array[i].name == name) {
+        if (strcmp(array[i].name, name) >= 0) {
             return &array[i];
         } else {
-            printf("(%s != %s)\n", array[i].name, name);
+            printf("(%s [%i] != %s [%i])\n", array[i].name, strlen(array[i].name), name, strlen(name));
         }
     }
     return NULL;

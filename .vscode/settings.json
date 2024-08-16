@@ -6,6 +6,7 @@
         "*.tcc": "cpp",
         "typeinfo": "c",
         "array": "c",
-        "string": "c"
+        "string": "c",
+        "audio_clip.h": "c"
     }
 }
