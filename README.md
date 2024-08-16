@@ -21,3 +21,4 @@ cmake ..
 mkdir debug && cd debug
 cd .. && make && cd debug && ./igiari
 ```
+(WARNING: It would be advised though not to build right now as I'm tinkering around with decrypted files that would normally be encrypted by the game. Only build it if you know what you're doing.)
