@@ -13,9 +13,6 @@
 
 #include "fmod/rebuild.h"
 
-#define RLUNICODE_IMPLEMENTATION 1
-#include "rlunicode.h"
-
 #include <malloc.h>
 #include <stdint.h>
 
