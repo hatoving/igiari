@@ -16,4 +16,9 @@ uint64_t igiari_utils_reader_ConvertUInt64_LEtoBE(uint64_t le);
 char* igiari_utils_reader_ReadStringTilNull(FILE* file);
 char* igiari_utils_reader_ReadStringTilNull_FromPointer(const char* start_ptr, size_t* bytes_read);
 
+uint64_t igiari_utils_reader_GetValueFromBits(uint64_t value, int lowest, int num_bits);
+
+uint32_t igiari_utils_reader_ReadBitsFromPtr(char** data, int* bit_offset, int num_bits);
+uint32_t igiari_utils_reader_ReadUInt24FromPtr(char* ptr);
+
 #endif

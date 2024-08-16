@@ -47,7 +47,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     bundle->header.signature = igiari_utils_reader_ReadStringTilNull(bundle_file);
     bundle->header.version = igiari_utils_reader_ReadUInt32_BE(bundle_file);
 
-     printf("[igiari, unity, bundle] Version: %i\n", bundle->header.version);
+    //printf("[igiari, unity, bundle] Version: %i\n", bundle->header.version);
 
     bundle->header.unity_rev = igiari_utils_reader_ReadStringTilNull(bundle_file);
     char* ver = igiari_utils_reader_ReadStringTilNull(bundle_file);
@@ -55,7 +55,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     //bundle->header.unity_ver = malloc(sizeof(igiari_unity_version));
     bundle->header.unity_ver = split_version(ver);
 
-    printf("[igiari, unity, bundle] Unity version: (%i.%i.%i%c%i)\n", ver, bundle->header.unity_ver->major, bundle->header.unity_ver->minor, bundle->header.unity_ver->revision, bundle->header.unity_ver->type_char, bundle->header.unity_ver->type_num);
+    //printf("[igiari, unity, bundle] Unity version: (%i.%i.%i%c%i)\n", ver, bundle->header.unity_ver->major, bundle->header.unity_ver->minor, bundle->header.unity_ver->revision, bundle->header.unity_ver->type_char, bundle->header.unity_ver->type_num);
 
     bundle->header.size = (int64_t)igiari_utils_reader_ReadUInt64_BE(bundle_file);
     bundle->header.compressed_blocks_info_size = igiari_utils_reader_ReadUInt32_BE(bundle_file);
@@ -100,7 +100,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     data_ptr += 16;
     int32_t block_info_count = igiari_utils_reader_ConvertUInt32_LEtoBE((*(int32_t*)data_ptr)); data_ptr += 4;
 
-    printf("[igiari, unity, bundle] Block info count: %i\n", block_info_count);
+    //printf("[igiari, unity, bundle] Block info count: %i\n", block_info_count);
 
     bundle->storage_blocks = malloc(block_info_count * sizeof(igiari_unity_bundle_storageblock));
     int storage_block_count = 0;
@@ -119,7 +119,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     }
 
     int32_t node_count = igiari_utils_reader_ConvertUInt32_LEtoBE((*(int32_t*)data_ptr)); data_ptr += 4;
-    printf("[igiari, unity, bundle] Node count: %i\n", node_count);
+    //printf("[igiari, unity, bundle] Node count: %i\n", node_count);
 
     bundle->directory_info = malloc(node_count * sizeof(igiari_unity_bundle_node));
     int dir_info_count = 0;
@@ -134,7 +134,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
 
         size_t bytes = 0;
         dummy.path = igiari_utils_reader_ReadStringTilNull_FromPointer(data_ptr, &bytes); data_ptr += bytes;
-        printf("[igiari, unity, bundle] Bundle path: %s, size: %i\n", dummy.path, dummy.size);
+        //printf("[igiari, unity, bundle] Bundle path: %s, size: %i\n", dummy.path, dummy.size);
 
         bundle->directory_info[dir_info_count] = dummy;
         dir_info_count++;
@@ -188,7 +188,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
         }
     }
 
-    printf("[igiari, unity, bundle] final size: %i\n", combined_block_data_count);
+    //printf("[igiari, unity, bundle] final size: %i\n", combined_block_data_count);
     bundle->uncompressed_data_len = combined_block_data_count;
     bundle->uncompressed_data = combined_block_data;
     fclose(bundle_file);
@@ -198,7 +198,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
 igiari_unity_bundle_node* igiari_unity_bundle_GetNodeByPath(igiari_unity_bundle* bundle, char* path) {
     for (int i = 0; i < bundle->directory_info_size; i++) {
         if (strcmp(bundle->directory_info[i].path, path) >= 0) {
-            printf("[igiari, unity, bundle] Found bundle: %s\n", bundle->directory_info[i].path);
+            //printf("[igiari, unity, bundle] Found bundle: %s\n", bundle->directory_info[i].path);
             return &bundle->directory_info[i];
         } else {
             //printf("[igiari, unity, bundle] (%s [%i] != %s [%i]])\n", bundle->directory_info[i].path, strlen(bundle->directory_info[i].path), path, strlen(path));

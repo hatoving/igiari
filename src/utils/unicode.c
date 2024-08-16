@@ -1,7 +1,7 @@
 #include "unicode.h"
 #include <stdlib.h>
 
-char* boshi_unicode_UTF32to8(uint32_t code_point) {
+char* igiari_unicode_UTF32_to_8(uint32_t code_point) {
     char* buffer = malloc(5);
     if (!buffer) return NULL;
 

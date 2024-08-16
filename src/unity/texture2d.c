@@ -56,7 +56,7 @@ igiari_unity_texture2d igiari_unity_texture2d_ReadFromPtr(const char* ptr) {
     return tex;
 }
 
-igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexture2DsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read) {
+igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read) {
     //igiari_unity_serizaliedfile file =  igiari_unity_serizaliedfile_ReadFromData(bundle->uncompressed_data, igiari_unity_bundle_GetNodeByPath(&bundle, path)->offset);
     //CAB-1f36da66d6416727fb8d0b18cb649fae
     igiari_unity_texture2d* tex_array = malloc(sizeof(igiari_unity_texture2d));
@@ -108,7 +108,7 @@ igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexture2DsFromNode(igiari_u
     return tex_array;
 }
 
-igiari_unity_texture2d* igiari_unity_texture2d_GetTexture2DByName(igiari_unity_texture2d* array, int size, char* name) {
+igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture2d* array, int size, char* name) {
     for (int i = 0; i < size; i++) {
         if (strcmp(array[i].name, name) >= 0) {
             return &array[i];
@@ -119,7 +119,7 @@ igiari_unity_texture2d* igiari_unity_texture2d_GetTexture2DByName(igiari_unity_t
     return NULL;
 }
 
-Texture2D igiari_unity_texture2d_ConvertIntoRaylibTexture2D(igiari_unity_texture2d* tex) {
+Texture2D igiari_unity_texture2d_ConvertIntoRaylib(igiari_unity_texture2d* tex) {
     int format = 0;
     switch(tex->texture_format) {
         case 3: { // RGB24

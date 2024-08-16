@@ -19,6 +19,7 @@ int boshi_core_Initialize(char* title, int width, int height, int game_width, in
     SetTargetFPS(frame_rate);
     SetWindowMinSize(boshi_GAME_WIDTH, boshi_GAME_HEIGHT);
     
+    InitAudioDevice();
     boshi_GAME_TEXTURE = LoadRenderTexture(boshi_GAME_WIDTH, boshi_GAME_HEIGHT);
     //SetTextureFilter(boshi_GAME_TEXTURE.texture, TEXTURE_FILTER_BILINEAR);
 

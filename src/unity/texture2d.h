@@ -1,5 +1,5 @@
-#ifndef IGIARI_UNITY_TEXTURE_2D_H
-#define IGIARI_UNITY_TEXTURE_2D_H
+#ifndef IGIARI_UNITY_TEXTURE2D_H
+#define IGIARI_UNITY_TEXTURE2D_H
 
 #include "bundle.h"
 #include "object.h"
@@ -38,9 +38,9 @@ typedef struct {
 } igiari_unity_texture2d;
 igiari_unity_texture2d igiari_unity_texture2d_ReadFromPtr(const char* ptr);
 
-igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexture2DsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
-igiari_unity_texture2d* igiari_unity_texture2d_GetTexture2DByName(igiari_unity_texture2d* array, int size, char* name);
+igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
+igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture2d* array, int size, char* name);
 
-Texture2D igiari_unity_texture2d_ConvertIntoRaylibTexture2D(igiari_unity_texture2d* tex);
+Texture2D igiari_unity_texture2d_ConvertIntoRaylib(igiari_unity_texture2d* tex);
 
 #endif

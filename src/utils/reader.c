@@ -49,6 +49,44 @@ uint64_t igiari_utils_reader_ConvertUInt64_LEtoBE(uint64_t le) {
            ((le & 0xFF00000000000000ULL) >> 56);
 }
 
+uint32_t igiari_utils_reader_ReadUInt24FromPtr(char* ptr) {
+    uint32_t x = *(uint8_t*)ptr; ptr += 1;
+    uint16_t y = *(uint16_t*)ptr; ptr += 2;
+    return x + (y << 8);
+}
+
+uint64_t igiari_utils_reader_GetValueFromBits(uint64_t value, int lowest, int num_bits) {
+    uint64_t mask = (1ULL << num_bits) - 1;
+    return (value >> lowest) & mask; 
+}
+
+uint32_t igiari_utils_reader_ReadBitsFromPtr(char** data, int* bit_offset, int num_bits) {
+    uint32_t result = 0; // Use uint32_t to hold the result
+    while (num_bits > 0) {
+        // Calculate the bit position in the current byte
+        int byte_offset = *bit_offset / 8;   // Byte offset in the data
+        int bit_index = *bit_offset % 8;     // Bit index in the byte
+
+        // Read the current byte
+        uint8_t currentByte = *(uint8_t*)(*data + byte_offset);
+
+        // Extract the bit from the current byte
+        uint8_t currentBit = (currentByte >> (7 - bit_index)) & 0x01;
+        result = (result << 1) | currentBit;
+
+        // Move to the next bit
+        (*bit_offset)++;
+        num_bits--;
+
+        // If we have moved past the end of the current byte, move to the next byte
+        if (*bit_offset % 8 == 0) {
+            (*data)++; // Move to the next byte in the data
+        }
+    }
+
+    return result;
+}
+
 char* igiari_utils_reader_ReadStringTilNull_FromPointer(const char* start_ptr, size_t* bytes_read) {
     if (start_ptr == NULL) {
         fprintf(stderr, "Error: Pointer is NULL.\n");

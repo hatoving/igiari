@@ -21,17 +21,24 @@ include(FetchContent)
     add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
   endif()
 
+find_library(VORBIS_LIBRARY vorbis)
+find_library(VORBISFILE_LIBRARY vorbisfile)
+find_library(OGG_LIBRARY ogg)
 # Our Project
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/engine)
 
 add_executable(${PROJECT_NAME}
+    src/utils/base64.c
     src/utils/lz4.c
+    src/utils/unicode.c
     src/utils/reader.c
+
+    src/fmod/fsb.c
+    src/fmod/rebuild.c
 
     src/unity/texture2d.c
     src/unity/audio_clip.c
-
     src/unity/serialized_file.c
     src/unity/bundle.c
 
@@ -40,6 +47,9 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
+    ogg
+    vorbis
+
     boshi
     raylib
 )

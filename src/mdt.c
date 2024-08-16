@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "mdt.h"
-#include "engine/unicode.h"
+#include "utils/unicode.h"
 
 int IGIARI_MDTOP_ARG_COUNTS[] = {
     0, 0, 0, 1, 1, 2, 2, 0, 2, 3, 1, 1, 1, 0, 1, 2,
@@ -124,7 +124,7 @@ igiari_mdt igiari_mdt_Read(char* path) {
 
             if (op_or_char >= 128) {
                 op_or_char -= 128;
-                char* utf8_char = boshi_unicode_UTF32to8(op_or_char);
+                char* utf8_char = igiari_unicode_UTF32_to_8(op_or_char);
                 //snprintf(buffer, sizeof(buffer), "\\u%02X", op_or_char);
                 string = realloc(string, (strlen(string) + strlen(utf8_char) + 1) * sizeof(char));
                 strcat(string, utf8_char);

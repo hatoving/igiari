@@ -1,5 +1,8 @@
 #include "audio_clip.h"
 
+#include "../fmod/fsb.h"
+#include "../fmod/rebuild.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -47,7 +50,7 @@ igiari_unity_audioclip igiari_unity_audioclip_ReadFromPtr(igiari_unity_bundle* b
     return clip;
 }
 
-igiari_unity_audioclip* igiari_unity_audioclip_GetAllAudioClipsFromNode(igiari_unity_bundle* bundle, char* path, int* clips_read) {
+igiari_unity_audioclip* igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity_bundle* bundle, char* path, int* clips_read) {
     igiari_unity_audioclip* clip_array = malloc(sizeof(igiari_unity_audioclip));
     int clip_count = 0;
 
@@ -93,4 +96,30 @@ igiari_unity_audioclip* igiari_unity_audioclip_GetAllAudioClipsFromNode(igiari_u
 
     *clips_read = clip_count;
     return clip_array;
+}
+
+igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioclip* array, int size, char* name) {
+    for (int i = 0; i < size; i++) {
+        if (strcmp(array[i].name, name) >= 0) {
+            return &array[i];
+        } else {
+            printf("(%s [%i] != %s [%i])\n", array[i].name, strlen(array[i].name), name, strlen(name));
+        }
+    }
+    return NULL;
+}
+
+Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip) {
+    Music mus;
+
+    char* ptr = clip->data;
+    igiari_fmod_fsb fsb = igiari_fmod_fsb_ReadFromPtr(ptr);
+    
+    int ogg_size = 0;
+    char* ogg_data = igiari_fmod_rebuild_vorbis_Convert(&fsb.samples[0], &ogg_size);
+
+    mus = LoadMusicStreamFromMemory(".ogg", ogg_data, ogg_size);
+    //fsb.samples[0].
+
+    return mus;
 }

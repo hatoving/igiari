@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "E:/MinGW/include"
+                "E:/w64/w64devkit/i686-w64-mingw32/include"
             ],
             "defines": [],
             "compilerPath": "E:/MinGW/bin/gcc.exe",

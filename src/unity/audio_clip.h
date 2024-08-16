@@ -38,7 +38,8 @@ typedef struct {
 } igiari_unity_audioclip;
 igiari_unity_audioclip igiari_unity_audioclip_ReadFromPtr(igiari_unity_bundle* bundle, const char* ptr);
 
-igiari_unity_audioclip* igiari_unity_audioclip_GetAllAudioClipsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
-igiari_unity_audioclip* igiari_unity_audioclip_GetAudioClipByName(igiari_unity_audioclip* array, int size, char* name);
+igiari_unity_audioclip* igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
+igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioclip* array, int size, char* name);
 
+Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip);
 #endif

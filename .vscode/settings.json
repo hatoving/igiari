@@ -7,6 +7,9 @@
         "typeinfo": "c",
         "array": "c",
         "string": "c",
-        "audio_clip.h": "c"
+        "audio_clip.h": "c",
+        "stdio.h": "c",
+        "sstream": "c",
+        "*.inc": "c"
     }
 }
