@@ -4,7 +4,6 @@
 #include "bundle.h"
 #include "object.h"
 
-#include <raylib.h>
 #include <stdint.h>
 
 typedef struct {
@@ -41,5 +40,5 @@ igiari_unity_audioclip igiari_unity_audioclip_ReadFromPtr(igiari_unity_bundle* b
 igiari_unity_audioclip* igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
 igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioclip* array, int size, char* name);
 
-Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip);
+//Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip);
 #endif

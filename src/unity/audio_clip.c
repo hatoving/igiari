@@ -109,7 +109,7 @@ igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioc
     return NULL;
 }
 
-Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip) {
+/*Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip) {
     Music mus;
 
     char* ptr = clip->data;
@@ -122,4 +122,4 @@ Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip) {
     //fsb.samples[0].
 
     return mus;
-}
+}*/

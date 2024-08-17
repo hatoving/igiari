@@ -1,8 +1,5 @@
+#include <stdio.h>
 #include <string.h>
-
-#include "engine/core.h"
-#include "engine/object.h"
-#include "engine/sprite.h"
 
 #include "mdt.h"
 
@@ -18,22 +15,11 @@
 
 
 int main(int argc, char *argv[]) {
-    if (boshi_core_Initialize("igiari", 1280, 720, 1280, 720, 60, true) != 0) {
-        printf("[igiari] Failed to initiliate engine.\n");
-        return 1;
-    } else {
-        boshi_core_SetRenderMode(boshi_RENDER_MODE_FIT);
-    }
-
-    igiari_mdt mdt = igiari_mdt_Read("ev0_mes_u.mdt.dec");
-
     igiari_unity_bundle* gs1_logo_bundle = igiari_unity_bundle_Read("titlegs1u.unity3d");
     int gs1_logo_tex_count = 0;
 
     igiari_unity_texture2d* gs1_logo_texarray = igiari_unity_texture2d_GetAllTexFromNode(gs1_logo_bundle, "CAB-1f36da66d6416727fb8d0b18cb649fae", &gs1_logo_tex_count);
     igiari_unity_texture2d* gs1_logo_tex = igiari_unity_texture2d_GetTexByName(gs1_logo_texarray, gs1_logo_tex_count, "titleGS1u");
-    Texture2D gs1_logo = igiari_unity_texture2d_ConvertIntoRaylib(gs1_logo_tex);
-    SetTextureFilter(gs1_logo, TEXTURE_FILTER_BILINEAR);
 
     free(gs1_logo_texarray);
     free(gs1_logo_bundle);
@@ -43,8 +29,6 @@ int main(int argc, char *argv[]) {
 
     igiari_unity_texture2d* game_bg_texarray = igiari_unity_texture2d_GetAllTexFromNode(game_bg_bundle, "CAB-ae9ba770903927e9f56b334635169106", &game_bg_tex_count);
     igiari_unity_texture2d* game_bg_tex = igiari_unity_texture2d_GetTexByName(game_bg_texarray, game_bg_tex_count, "title_back");
-    Texture2D game_bg = igiari_unity_texture2d_ConvertIntoRaylib(game_bg_tex);
-    SetTextureFilter(game_bg, TEXTURE_FILTER_BILINEAR);
 
     free(game_bg_texarray);
     free(game_bg_bundle);
@@ -54,42 +38,20 @@ int main(int argc, char *argv[]) {
     int clip_count = 0;
     igiari_unity_audioclip* clips = igiari_unity_audioclip_GetAllClipsFromNode(bgm002_bundle, "CAB-f57039f1f4db3b22350bb67f1a459d32", &clip_count);
     igiari_unity_audioclip* bgm002 = igiari_unity_audioclip_GetClipByName(clips, clip_count, "bgm002");
-    Music mus = igiari_unity_audioclip_ConvertIntoRaylib(bgm002);
 
-    Font font = LoadFont("FOT-ModeMinBLargeStd-R.otf");
-    SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
+    free(clips);
 
-    //free(tex_unity);
+    char* ptr = bgm002->data;
+    igiari_fmod_fsb fsb = igiari_fmod_fsb_ReadFromPtr(ptr);
+    
+    int ogg_size = 0;
+    char* ogg_data = igiari_fmod_rebuild_vorbis_Convert(&fsb.samples[0], &ogg_size);
+    
+    FILE* file = fopen("bgm002.ogg", "wb");
+    fwrite(ogg_data, ogg_size, 1, file);
+    fclose(file);
 
-    while(!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_F11)) {
-            ToggleBorderlessWindowed();
-        }
+    free(ogg_data);
 
-        UpdateMusicStream(mus); 
-        if (IsKeyPressed(KEY_SPACE)) {
-            PlayMusicStream(mus);
-        }
-        
-        boshi_core_BeginDrawing();
-            ClearBackground(BLACK);
-            //DrawTextCodepoint(font, GetCodepointFromUTF16(&mdt.operations[20].text[1], &wordsProcessed), (Vector2){20, 20}, 20, WHITE);
-            //DrawText(mdt.operations[274].text, 20, 20, 16, WHITE);
-            DrawTexturePro(
-                game_bg, (Rectangle){0, 0, game_bg.width, -game_bg.height},
-                (Rectangle){0, 0, 1280, 720},
-                (Vector2){0, 0}, 0.0, WHITE
-            );
-            DrawTexturePro(
-                gs1_logo, (Rectangle){0, 0, gs1_logo.width, -gs1_logo.height},
-                (Rectangle){1280 / 2, 720 / 2 - 50, gs1_logo.width / 1.5, gs1_logo.height / 1.5},
-                (Vector2){(gs1_logo.width / 1.5) / 2, ( gs1_logo.height / 1.5) / 2}, 0.0, WHITE
-            );
-            DrawTextEx(font, /*mdt.operations[115].text*/"Press Space to play a very cool song", (Vector2){20, 600}, 30, 2, WHITE);
-        boshi_core_EndDrawing();
-    }
-    //UnloadTexture(texture);+
-    UnloadFont(font);
-    boshi_core_Quit();
     return 0;
 }

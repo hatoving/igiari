@@ -119,7 +119,7 @@ igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture
     return NULL;
 }
 
-Texture2D igiari_unity_texture2d_ConvertIntoRaylib(igiari_unity_texture2d* tex) {
+/*Texture2D igiari_unity_texture2d_ConvertIntoRaylib(igiari_unity_texture2d* tex) {
     int format = 0;
     switch(tex->texture_format) {
         case 3: { // RGB24
@@ -150,4 +150,4 @@ Texture2D igiari_unity_texture2d_ConvertIntoRaylib(igiari_unity_texture2d* tex) 
 
     UnloadImage(image);
     return ray_tex;
-}
+}*/
