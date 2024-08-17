@@ -1,12 +1,15 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Windows",
             "includePath": [
                 "${workspaceFolder}/**",
                 "E:/w64/w64devkit/i686-w64-mingw32/include"
             ],
-            "defines": [],
+            "defines": [
+                "WIN32=1",
+                "__linux__=0"
+            ],
             "compilerPath": "E:/MinGW/bin/gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++98",

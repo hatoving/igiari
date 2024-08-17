@@ -80,7 +80,7 @@ igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_bu
         char* name = (char*)malloc(string_len + 1);
         memcpy(name, ptr, string_len); ptr += string_len;
         name[string_len] = '\0';
-        //printf("[igiari, unity, tex2d] string size: %i. actual: %i\n", strlen(name), string_len);
+        printf("[igiari, unity, tex2d] \"name\": %s\n", name);
 
         uintptr_t addr = (uintptr_t)ptr;
         addr = (addr + 3) & ~((uintptr_t)3);
@@ -111,9 +111,8 @@ igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_bu
 igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture2d* array, int size, char* name) {
     for (int i = 0; i < size; i++) {
         if (strcmp(array[i].name, name) >= 0) {
+            printf("[igiari, unity] Found \"%s\"\n", array[i].name);
             return &array[i];
-        } else {
-            printf("(%s [%i] != %s [%i])\n", array[i].name, strlen(array[i].name), name, strlen(name));
         }
     }
     return NULL;

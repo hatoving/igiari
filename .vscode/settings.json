@@ -10,6 +10,11 @@
         "audio_clip.h": "c",
         "stdio.h": "c",
         "sstream": "c",
-        "*.inc": "c"
-    }
+        "*.inc": "c",
+        "sdl.h": "c",
+        "sdl_clipboard.h": "c",
+        "sdl_audio.h": "c",
+        "sdl_endian.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
