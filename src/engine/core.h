@@ -13,9 +13,17 @@ extern int IGIARI_ENGINE_TARGETSIZE_HEIGHT;
 extern int IGIARI_ENGINE_RUNNING;
 extern int IGIARI_ENGINE_FULLSCREEN;
 
-void igiari_engine_core_Initialize(int window_width, int window_height, char* title);
+extern int IGIARI_ENGINE_FPS;
+
+extern float IGIARI_ENGINE_DELTA_TIME;
+extern float IGIARI_ENGINE_FRAME_START;
+extern float IGIARI_ENGINE_FRAME_END;
+extern double IGIARI_ENGINE_FRAME_DURATION;
+
+void igiari_engine_core_Initialize(char* title, int window_width, int window_height, int fps);
 
 void igiari_engine_core_StartUpdate(SDL_Event* e);
+void igiari_engine_core_EndUpdate();
 
 void igiari_engine_core_StartRender();
 void igiari_engine_core_EndRender();

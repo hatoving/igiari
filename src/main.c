@@ -56,7 +56,7 @@ const char* FRAG_SHADER_SRC = R"(
 )";
 
 int main(int argc,char **argv) {
-    igiari_engine_core_Initialize(1280, 720, "igiari");
+    igiari_engine_core_Initialize("igiari", 1280, 720, 60);
 
     igiari_unity_bundle* gs1_logo_bundle = igiari_unity_bundle_Read("titlegs1u.unity3d");
     int game_bg_tex_count = 0;
@@ -78,6 +78,8 @@ int main(int argc,char **argv) {
             igiari_engine_shader_Use(shader);
             igiari_engine_sprite_Draw(gs1_logo, shader);
         igiari_engine_core_EndRender();
+
+        igiari_engine_core_EndUpdate();
     }
 
     igiari_engine_core_Quit();

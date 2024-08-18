@@ -11,7 +11,14 @@ int IGIARI_ENGINE_TARGETSIZE_HEIGHT = 1080;
 int IGIARI_ENGINE_RUNNING = 0;
 int IGIARI_ENGINE_FULLSCREEN = 0;
 
-void igiari_engine_core_Initialize(int window_width, int window_height, char* title) {
+int IGIARI_ENGINE_FPS = 60;
+
+float IGIARI_ENGINE_DELTA_TIME = 0.0f;
+float IGIARI_ENGINE_FRAME_START = 0.0f;
+float IGIARI_ENGINE_FRAME_END = 0.0f;
+double IGIARI_ENGINE_FRAME_DURATION = 0.0f;
+
+void igiari_engine_core_Initialize(char* title, int window_width, int window_height, int fps) {
     printf("[igiari, engine] Starting engine...\n");
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -32,9 +39,19 @@ void igiari_engine_core_Initialize(int window_width, int window_height, char* ti
 
     IGIARI_ENGINE_RUNNING = 1;
     IGIARI_ENGINE_FULLSCREEN = 0;
+
+    IGIARI_ENGINE_FPS = fps;
+    IGIARI_ENGINE_FRAME_DURATION = 1000.0f / (double)IGIARI_ENGINE_FPS;
+
+    IGIARI_ENGINE_FRAME_END = SDL_GetTicks();
 }
 
 void igiari_engine_core_StartUpdate(SDL_Event* e) {
+    IGIARI_ENGINE_FRAME_START = SDL_GetTicks();
+    IGIARI_ENGINE_DELTA_TIME = (IGIARI_ENGINE_FRAME_START - IGIARI_ENGINE_FRAME_END) / 1000.0f;
+
+    IGIARI_ENGINE_FRAME_END = IGIARI_ENGINE_FRAME_START;
+
     while(SDL_PollEvent(e)) {
         if(e->type == SDL_QUIT)
             IGIARI_ENGINE_RUNNING = 0;
@@ -75,6 +92,13 @@ void igiari_engine_core_StartUpdate(SDL_Event* e) {
                 }
             }
         }
+    }
+}
+
+void igiari_engine_core_EndUpdate() {
+    uint32_t frame_time = SDL_GetTicks() - IGIARI_ENGINE_FRAME_START;
+    if (IGIARI_ENGINE_FRAME_DURATION > frame_time) {
+        SDL_Delay(IGIARI_ENGINE_FRAME_DURATION - frame_time);
     }
 }
 
