@@ -36,10 +36,10 @@ typedef struct {
 
     igiari_unity_object_streaminginfo info;
 } igiari_unity_texture2d;
-igiari_unity_texture2d igiari_unity_texture2d_ReadFromPtr(const char* ptr);
+igiari_unity_texture2d* igiari_unity_texture2d_ReadFromPtr(const char* ptr);
 
-igiari_unity_texture2d* igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
-igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture2d* array, int size, char* name);
+igiari_unity_texture2d** igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
+igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture2d** array, int size, char* name);
 
 //Texture2D igiari_unity_texture2d_ConvertIntoRaylib(igiari_unity_texture2d* tex);
 

@@ -67,7 +67,7 @@ typedef struct {
     int sample_count;
     igiari_fmod_fsb_sample* samples;
 } igiari_fmod_fsb;
-igiari_fmod_fsb igiari_fmod_fsb_ReadFromPtr(char* ptr);
+igiari_fmod_fsb* igiari_fmod_fsb_ReadFromPtr(char* ptr);
 
 int igiari_fmod_fsb_GetFreq(int freq_id);
 #endif

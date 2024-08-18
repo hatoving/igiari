@@ -12,18 +12,25 @@ find_library(OGG_LIBRARY ogg)
 
 # Define source files
 set(SOURCE_FILES
-    src/utils/base64.c
     src/utils/lz4.c
     src/utils/unicode.c
     src/utils/reader.c
 
-    src/fmod/fsb.c
-    src/fmod/rebuild.c
+    # FMOD
+    src/assets/fmod/fsb.c
+    src/assets/fmod/rebuild.c
 
-    src/unity/texture2d.c
-    src/unity/audio_clip.c
-    src/unity/serialized_file.c
-    src/unity/bundle.c
+    # Unity (2017.4)
+    src/assets/unity/texture2d.c
+    src/assets/unity/audio_clip.c
+    src/assets/unity/serialized_file.c
+    src/assets/unity/bundle.c
+    
+    src/engine/camera.c
+    src/engine/shader.c
+    src/engine/texture.c
+    src/engine/sprite.c
+    src/engine/core.c
 
     src/mdt.c
     src/main.c

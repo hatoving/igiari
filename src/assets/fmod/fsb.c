@@ -1,5 +1,5 @@
 #include "fsb.h"
-#include "../utils/reader.h"
+#include "../../utils/reader.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -241,58 +241,58 @@ igiari_fmod_fsb_header igiari_fmod_fsb_impl_ReadHeaderFromPtr(char* ptr, size_t*
     return header;
 }
 
-igiari_fmod_fsb igiari_fmod_fsb_ReadFromPtr(char* ptr) {
-    igiari_fmod_fsb fsb;
+igiari_fmod_fsb* igiari_fmod_fsb_ReadFromPtr(char* ptr) {
+    igiari_fmod_fsb* fsb = (igiari_fmod_fsb*)malloc(sizeof(igiari_fmod_fsb));
 
     char* start = ptr;
 
     size_t bytes_read = 0;
     //printf("[igiari, fsb] pos: %p\n", ptr);
-    fsb.header = igiari_fmod_fsb_impl_ReadHeaderFromPtr(ptr, &bytes_read); ptr += bytes_read;
+    fsb->header = igiari_fmod_fsb_impl_ReadHeaderFromPtr(ptr, &bytes_read); ptr += bytes_read;
     //printf("[igiari, fsb] pos: %p\n", ptr);
 
-    fsb.samples = malloc(sizeof(igiari_fmod_fsb_sample));
-    fsb.sample_count = 0;
+    fsb->samples = malloc(sizeof(igiari_fmod_fsb_sample));
+    fsb->sample_count = 0;
 
-    printf("reading %i samples\n", fsb.header.sample_count);
-    for (int i = 0; i < fsb.header.sample_count; i++)
+    printf("reading %i samples\n", fsb->header.sample_count);
+    for (int i = 0; i < fsb->header.sample_count; i++)
     {
-        igiari_fmod_fsb_sample_metadata* metadata = &fsb.header.samples[i];
+        igiari_fmod_fsb_sample_metadata* metadata = &fsb->header.samples[i];
 
         int data_offset = metadata->data_offset;
-        int size = fsb.header.data_size;
+        int size = fsb->header.data_size;
 
-        if (i < fsb.header.sample_count - 1) {
-            size = fsb.header.samples[i + 1].data_offset;
+        if (i < fsb->header.sample_count - 1) {
+            size = fsb->header.samples[i + 1].data_offset;
         }
 
         igiari_fmod_fsb_sample sample;
         sample.metadata = metadata;
 
         //ptr = start + first_byte_of_sample;
-        //printf("%i == %i\n", last_byte_of_sample - first_byte_of_sample, fsb.header.data_size);
-        ptr = start + fsb.header.header_size + fsb.header.name_table_size + fsb.header.sample_headers_size;
-        printf("offset: %i\n", fsb.header.data_size);
+        //printf("%i == %i\n", last_byte_of_sample - first_byte_of_sample, fsb->header.data_size);
+        ptr = start + fsb->header.header_size + fsb->header.name_table_size + fsb->header.sample_headers_size;
+        printf("offset: %i\n", fsb->header.data_size);
 
-        sample.sample_bytes = malloc(fsb.header.data_size);
-        memcpy(sample.sample_bytes, ptr, fsb.header.data_size); ptr += fsb.header.data_size;
-        sample.sample_len = fsb.header.data_size;
+        sample.sample_bytes = malloc(fsb->header.data_size);
+        memcpy(sample.sample_bytes, ptr, fsb->header.data_size); ptr += fsb->header.data_size;
+        sample.sample_len = fsb->header.data_size;
 
-        if (fsb.header.name_table_size > 0) {
-            char* name_offset_offset = (char*)(fsb.header.header_size + fsb.header.sample_headers_size + 4 + i);
+        if (fsb->header.name_table_size > 0) {
+            char* name_offset_offset = (char*)(fsb->header.header_size + fsb->header.sample_headers_size + 4 + i);
             ptr = name_offset_offset;
 
             char* name_offset = (char*)(*(uint32_t*)ptr); ptr += 4;
-            name_offset += fsb.header.header_size + fsb.header.sample_headers_size;
+            name_offset += fsb->header.header_size + fsb->header.sample_headers_size;
 
             sample.name = igiari_utils_reader_ReadStringTilNull_FromPointer(ptr, &bytes_read); ptr += bytes_read;
             printf("[igiari, fsb] Sample name: %s\n", sample.name);
             break;
         }
 
-        fsb.samples = realloc(fsb.samples, (fsb.sample_count + 1) * sizeof(igiari_fmod_fsb_sample));
-        fsb.samples[fsb.sample_count] = sample;
-        fsb.sample_count++;
+        fsb->samples = realloc(fsb->samples, (fsb->sample_count + 1) * sizeof(igiari_fmod_fsb_sample));
+        fsb->samples[fsb->sample_count] = sample;
+        fsb->sample_count++;
     }
 
     return fsb;

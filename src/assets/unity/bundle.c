@@ -1,7 +1,7 @@
 #include "bundle.h"
 
-#include "../utils/lz4.h"
-#include "../utils/reader.h"
+#include "../../utils/lz4.h"
+#include "../../utils/reader.h"
 
 #include <stdio.h>
 #include <stdlib.h>

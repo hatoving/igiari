@@ -14,7 +14,14 @@
         "sdl.h": "c",
         "sdl_clipboard.h": "c",
         "sdl_audio.h": "c",
-        "sdl_endian.h": "c"
+        "sdl_endian.h": "c",
+        "glad.h": "c",
+        "texture2d.h": "c",
+        "serialized_file.h": "c",
+        "malloc.h": "c",
+        "sprite.h": "c",
+        "shader.h": "c",
+        "any": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -1,6 +1,6 @@
 #include "rebuild.h"
 #include "vorbis_headers.h"
-#include "../utils/reader.h"
+#include "../../utils/reader.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,7 +72,7 @@ ogg_packet igiari_fmod_rebuild_vorbis_BuildCommentPacket(int loop_start, int loo
     vorbis_comment_clear(&comment);
     return packet;
 }
-void igiari_fmod_rebuild_CopySampleData(char** final_data, int* current_size, char* sample_bytes, int sample_bytes_len, int prev_pos, ogg_packet* header, ogg_stream_state* os, vorbis_info* info) {
+void igiari_fmod_rebuild_CopySampleData(char** final_data, int* current_size, char* sample_bytes, int sample_bytes_len, int prev_pos, ogg_stream_state* os, vorbis_info* info) {
     char* ptr = sample_bytes;
     
     int size = *current_size;
@@ -147,7 +147,7 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
         return NULL;
     }
 
-    igiari_fmod_rebuild_vorbisheader* header;
+    igiari_fmod_rebuild_vorbisheader* header = (igiari_fmod_rebuild_vorbisheader*)malloc(sizeof(igiari_fmod_rebuild_vorbisheader));
     int num_elements = sizeof(igiari_fmod_rebuild_vorbisheaders) / sizeof(igiari_fmod_rebuild_vorbisheaders[0]);
     for (int i = 0; i < num_elements; i++)
     {
@@ -188,7 +188,7 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
     vorbis_comment_init(&comment);
 
     ogg_stream_state os;
-    int result = ogg_stream_init(&os, 1);
+    ogg_stream_init(&os, 1);
 
     int synthesis = vorbis_synthesis_headerin(&info, &comment, &info_packet);
     printf("[igiari, fmod, rebuild] info_packet result: %i\n", synthesis);
@@ -240,7 +240,7 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
         final_data_size += final.header_len + final.body_len;
     }
 
-    igiari_fmod_rebuild_CopySampleData(&final_data, &final_data_size, sample->sample_bytes, sample->sample_len, header_packet.packetno, &header_packet, &os, &info);
+    igiari_fmod_rebuild_CopySampleData(&final_data, &final_data_size, sample->sample_bytes, sample->sample_len, header_packet.packetno, &os, &info);
     printf("FINAL size: %i\n", final_data_size);
 
     *size = final_data_size;

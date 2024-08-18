@@ -5,7 +5,8 @@ igiari (``異議あり; "Objection!"``) is a work-in-progress engine for the Ace
 This is not yet playable as of the time that I'm writing this. There's still a long way to go, but if you wanna add in some help then feel free to make a pull request or ask!
 
 # Dependecies
-- Raylib (5.0.0)
+- SDL2
+- OpenGL ES 2.0
 - LZ4
 - cJSON (not yet used)
 
