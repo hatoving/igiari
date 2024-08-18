@@ -11,27 +11,6 @@ int IGIARI_ENGINE_TARGETSIZE_HEIGHT = 1080;
 int IGIARI_ENGINE_RUNNING = 0;
 int IGIARI_ENGINE_FULLSCREEN = 0;
 
-void igiari_engine_core_impl_Letterbox(SDL_Event* e) {
-    int width = e->window.data1;
-    int height = e->window.data2;
-
-    float target_aspect_ratio = IGIARI_ENGINE_TARGETSIZE_WIDTH / IGIARI_ENGINE_TARGETSIZE_HEIGHT;
-    float screen_aspect_ratio = width / height;
-
-    float viewport_width, viewport_height;
-    float viewport_offset_x = 0.0f, viewport_offset_y = 0.0f;
-
-    if (screen_aspect_ratio > target_aspect_ratio) {
-        viewport_height = width;
-        viewport_width = viewport_height * target_aspect_ratio;
-        viewport_offset_x = (width - viewport_width) / 2.0f;
-    } else {
-        viewport_width = width;
-        viewport_height = viewport_width / target_aspect_ratio;
-        viewport_offset_y = (height - viewport_height) / 2.0f;
-    }
-}
-
 void igiari_engine_core_Initialize(int window_width, int window_height, char* title) {
     printf("[igiari, engine] Starting engine...\n");
 
@@ -40,7 +19,7 @@ void igiari_engine_core_Initialize(int window_width, int window_height, char* ti
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
     SDL_Init(SDL_INIT_VIDEO);
-    IGIARI_ENGINE_SDLWINDOW = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    IGIARI_ENGINE_SDLWINDOW = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
     IGIARI_ENGINE_GLCONTEXT = SDL_GL_CreateContext(IGIARI_ENGINE_SDLWINDOW);
     SDL_GL_MakeCurrent(IGIARI_ENGINE_SDLWINDOW, IGIARI_ENGINE_GLCONTEXT);
@@ -61,7 +40,28 @@ void igiari_engine_core_StartUpdate(SDL_Event* e) {
             IGIARI_ENGINE_RUNNING = 0;
         if (e->type == SDL_WINDOWEVENT) {
             if (e->window.event == SDL_WINDOWEVENT_RESIZED) {
-                igiari_engine_core_impl_Letterbox(e);
+                int width = e->window.data1;
+                int height = e->window.data2;
+
+                float target_aspect_ratio = (float)IGIARI_ENGINE_TARGETSIZE_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_HEIGHT;
+                float screen_aspect_ratio = (float)width / (float)height;  // Make sure this is a float division
+
+                float viewport_width, viewport_height;
+                float viewport_offset_x = 0.0f, viewport_offset_y = 0.0f;
+
+                if (screen_aspect_ratio > target_aspect_ratio) {
+                    // Letterbox vertically
+                    viewport_height = (float)height;
+                    viewport_width = viewport_height * target_aspect_ratio;
+                    viewport_offset_x = (float)(width - viewport_width) / 2.0f;
+                } else {
+                    // Letterbox horizontally
+                    viewport_width = (float)width;
+                    viewport_height = viewport_width / target_aspect_ratio;
+                    viewport_offset_y = (float)(height - viewport_height) / 2.0f;
+                }
+
+                glViewport((GLint)viewport_offset_x, (GLint)viewport_offset_y, (GLint)viewport_width, (GLint)viewport_height);
             }
         }
         if (e->type == SDL_KEYDOWN) {

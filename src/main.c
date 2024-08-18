@@ -69,8 +69,6 @@ int main(int argc,char **argv) {
     igiari_engine_shader* shader = igiari_engine_shader_Create(VERTEX_SHADER_SRC, FRAG_SHADER_SRC);
     igiari_engine_sprite* gs1_logo = igiari_engine_sprite_Create(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, igiari_engine_texture_LoadFromUnityAsset(gs1_logo_tex));
 
-    free(gs1_logo_tex);
-
     SDL_Event e;
     while(IGIARI_ENGINE_RUNNING)
     {
