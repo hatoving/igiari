@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer_ext.h>
 
 #include "assets/pwaat/mdt.h"
 #include "assets/fmod/rebuild.h"
@@ -80,12 +81,14 @@ int main(int argc,char **argv) {
     igiari_unity_bundle* bgm_bundle = igiari_unity_bundle_Read("bgm200.unity3d"); int mus_count = 0;
     igiari_unity_audioclip** bgm_array = igiari_unity_audioclip_GetAllClipsFromNode(bgm_bundle, "CAB-b51dcfc932ed9c0b84264effd46acc63", &mus_count);
     
-    char* bgm_ogg_data = igiari_unity_audioclip_ConvertIntoOggData(igiari_unity_audioclip_GetClipByName(bgm_array, mus_count, "bgm200"));
-    ALuint bgm_source = igiari_audio_LoadOggFile(bgm_ogg_data);
+    igiari_audio_music* bgm_source = igiari_audio_CreateMusicFromAudioClip(igiari_unity_audioclip_GetClipByName(bgm_array, mus_count, "bgm200"));
 
     free(bgm_bundle);
     free(bgm_array);
-
+    
+    Mix_PlayMusicStream(bgm_source->src, -1);
+    //Mix_SetMusicPositionStream(bgm_source->src, bgm_source->loop_end - (double)6.0f);
+    
     SDL_Event e;
     while(IGIARI_ENGINE_RUNNING)
     {
@@ -99,7 +102,8 @@ int main(int argc,char **argv) {
 
         igiari_engine_core_EndUpdate();
     }
-
+    
+    Mix_FreeMusic(bgm_source->src);
     igiari_engine_core_Quit();
 
     return 0;

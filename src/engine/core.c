@@ -53,7 +53,7 @@ void igiari_engine_core_Initialize(char* title, int window_width, int window_hei
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
     IGIARI_ENGINE_SDLWINDOW = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
     IGIARI_ENGINE_GLCONTEXT = SDL_GL_CreateContext(IGIARI_ENGINE_SDLWINDOW);

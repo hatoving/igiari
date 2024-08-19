@@ -1,5 +1,5 @@
 # igiari
-igiari[[¹]](#1) is a work-in-progress game engine for the 2D Ace Attorney games published by Capcom.
+igiari is a work-in-progress game engine for the 2D Ace Attorney games published by Capcom.
 
 # Compatiblity
 Right now, work is being set on working on the remaster of the original trilogy.
@@ -21,8 +21,8 @@ This is not yet playable as of the time that I'm writing this. There's still a l
 
 # Dependecies
 - SDL2
+- SDL_Mixer_X
 - OpenGL ES 2.0
-- OpenAL Soft
 
 # Libraries Used
 - LZ4
@@ -31,7 +31,7 @@ This is not yet playable as of the time that I'm writing this. There's still a l
 Everything else is coded in pure C.
 
 # Building (for Developers)
-Make sure you have `CMake`, `gcc` and `OpenGL` and `SDL2` already installed in your dev environment.
+Make sure you have `CMake`, `gcc`,`OpenGL`, `SDL2` and `SDL2_Mixer_X` already installed in your dev environment.
 Once you're sure, you can execute these commands to build the engine:
 ```
 mkdir build && cd build
@@ -40,6 +40,3 @@ mkdir debug && cd debug
 cd .. && make && cd debug && ./igiari
 ```
 (WARNING: It would be advised though not to build right now as I'm tinkering around with decrypted files that would normally be encrypted by the game. Only build it if you know what you're doing.)
-
-# References
-<a id="1">[¹]</a> 異議あり ("Objection!")

@@ -110,11 +110,14 @@ igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioc
     return NULL;
 }
 
-char* igiari_unity_audioclip_ConvertIntoOggData(igiari_unity_audioclip* clip) {
+char* igiari_unity_audioclip_GetOggFileFromClip(igiari_unity_audioclip* clip, int* size, int* loop_start, int* loop_end) {
     char* ptr = clip->data;
     igiari_fmod_fsb* fsb = igiari_fmod_fsb_ReadFromPtr(ptr);
     
     int ogg_size = 0;
-    char* ogg_data = igiari_fmod_rebuild_vorbis_Convert(&fsb->samples[0], &ogg_size);
+    char* ogg_data = igiari_fmod_rebuild_vorbis_Convert(&fsb->samples[0], &ogg_size, loop_start, loop_end);
+    
+    *size = ogg_size;
+    
     return ogg_data;
 }

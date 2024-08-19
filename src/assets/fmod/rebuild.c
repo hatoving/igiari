@@ -134,7 +134,7 @@ igiari_fmod_rebuild_vorbisheader igiari_fmod_rebuild_vorbisheaders[] = {
 };
 
 
-char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* size) {
+char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* size, int* loop_start, int* loop_end) {
     igiari_fmod_chunk_vorbis* vorbis_chunk = NULL;
     for (int i = 0; i < sample->metadata->chunk_count; i++)
     {
@@ -160,17 +160,15 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
     
     ogg_packet info_packet = igiari_fmod_rebuild_vorbis_BuildInfoPacket(0x100, 0x800, (uint8_t)sample->metadata->num_channels, igiari_fmod_fsb_GetFreq(sample->metadata->freq_id));
 
-    int loop_start = 0;
-    int loop_end = 0;
     for (int i = 0; i < sample->metadata->chunk_count; i++)
     {
         if (sample->metadata->chunks[i].chunk_type == 6) {
-            loop_start = sample->metadata->chunks[i].chunk.loop->loop_start;
-            loop_end = sample->metadata->chunks[i].chunk.loop->loop_end;
+            *loop_start = sample->metadata->chunks[i].chunk.loop->loop_start;
+            *loop_end = sample->metadata->chunks[i].chunk.loop->loop_end;
         }
     }
 
-    ogg_packet comment_packet = igiari_fmod_rebuild_vorbis_BuildCommentPacket(loop_start, loop_end);
+    ogg_packet comment_packet = igiari_fmod_rebuild_vorbis_BuildCommentPacket(*loop_start, *loop_end);
     ogg_packet header_packet;
 
     header_packet.packet = malloc(header->setup_size);

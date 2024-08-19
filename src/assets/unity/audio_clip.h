@@ -40,6 +40,6 @@ igiari_unity_audioclip* igiari_unity_audioclip_ReadFromPtr(igiari_unity_bundle* 
 igiari_unity_audioclip** igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
 igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioclip** array, int size, char* name);
 
-char* igiari_unity_audioclip_ConvertIntoOggData(igiari_unity_audioclip* clip);
+char* igiari_unity_audioclip_GetOggFileFromClip(igiari_unity_audioclip* clip, int* size, int* loop_start, int* loop_end);
 //Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip);
 #endif

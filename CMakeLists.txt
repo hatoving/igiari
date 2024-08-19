@@ -52,10 +52,10 @@ target_link_libraries(${PROJECT_NAME}
     -Wl,-Bstatic
     ogg
     vorbis
+    vorbisfile
     
     -Wl,-Bdynamic
     SDL2main
     SDL2
-    
-    openal
+    SDL2_Mixer_ext
 )
