@@ -35,10 +35,11 @@ typedef struct {
 
     igiari_unity_object_streaminginfo info;
 } igiari_unity_audioclip;
-igiari_unity_audioclip igiari_unity_audioclip_ReadFromPtr(igiari_unity_bundle* bundle, const char* ptr);
+igiari_unity_audioclip* igiari_unity_audioclip_ReadFromPtr(igiari_unity_bundle* bundle, const char* ptr);
 
-igiari_unity_audioclip* igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
-igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioclip* array, int size, char* name);
+igiari_unity_audioclip** igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
+igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioclip** array, int size, char* name);
 
+char* igiari_unity_audioclip_ConvertIntoOggData(igiari_unity_audioclip* clip);
 //Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip);
 #endif

@@ -37,8 +37,8 @@ ogg_packet igiari_fmod_rebuild_vorbis_BuildInfoPacket(int blocksize_short, int b
 
     oggpack_write(&buf, 1, 1);  // Framing flag
 
-     printf("Channels: %u, Frequency: %u\n", channels, freq);
-    printf("Blocksize Short: %d (log2: %d), Blocksize Long: %d (log2: %d)\n", blocksize_short, log2_short, blocksize_long, log2_long);
+    printf("[igiari, fmod, rebulid] Channels: %u, Frequency: %u\n", channels, freq);
+    //printf("Blocksize Short: %d (log2: %d), Blocksize Long: %d (log2: %d)\n", blocksize_short, log2_short, blocksize_long, log2_long);
 
     packet.bytes = oggpack_bytes(&buf);
     packet.packet = malloc(packet.bytes);
@@ -64,8 +64,9 @@ ogg_packet igiari_fmod_rebuild_vorbis_BuildCommentPacket(int loop_start, int loo
         char loop_end_str[20];
         sprintf(loop_end_str, "%i", loop_end);
 
-        vorbis_comment_add_tag(&comment, "LOOP_START", loop_start_str);
-        vorbis_comment_add_tag(&comment, "LOOP_END", loop_end_str);
+        // VERY IMPORTANT. SDL_mixer_ext can recognize these tags and automatically play this shit looped without any more work
+        vorbis_comment_add_tag(&comment, "LOOPSTART", loop_start_str);
+        vorbis_comment_add_tag(&comment, "LOOPEND", loop_end_str);
     }
     //ogg_packet_clear(&packet);
     vorbis_commentheader_out(&comment, &packet);
@@ -191,11 +192,11 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
     ogg_stream_init(&os, 1);
 
     int synthesis = vorbis_synthesis_headerin(&info, &comment, &info_packet);
-    printf("[igiari, fmod, rebuild] info_packet result: %i\n", synthesis);
+    //printf("[igiari, fmod, rebuild] info_packet result: %i\n", synthesis);
     synthesis = vorbis_synthesis_headerin(&info, &comment, &comment_packet);
-    printf("[igiari, fmod, rebuild] comment_packet result: %i\n", synthesis);
+    //printf("[igiari, fmod, rebuild] comment_packet result: %i\n", synthesis);
     synthesis = vorbis_synthesis_headerin(&info, &comment, &header_packet);
-    printf("[igiari, fmod, rebuild] header_packet result: %i\n", synthesis);
+    //printf("[igiari, fmod, rebuild] header_packet result: %i\n", synthesis);
 
     char* final_data = malloc(1);
     int final_data_size = 0;
@@ -241,7 +242,7 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
     }
 
     igiari_fmod_rebuild_CopySampleData(&final_data, &final_data_size, sample->sample_bytes, sample->sample_len, header_packet.packetno, &os, &info);
-    printf("FINAL size: %i\n", final_data_size);
+    //printf("FINAL size: %i\n", final_data_size);
 
     *size = final_data_size;
     return final_data;

@@ -144,7 +144,7 @@ igiari_fmod_fsb_sample_metadata igiari_fmod_fsb_impl_ReadMetadataFromPtr(char* p
 
     // Extract data_offset from bits 7 to 33 and multiply by 32
     metadata.data_offset = ((encoded >> 7) & 0x7FFFFFF) * 32;
-    printf("DATA OFF: %i\n", metadata.data_offset);
+    //printf("DATA OFF: %i\n", metadata.data_offset);
 
     // Extract sample_count from bits 34 to 63
     metadata.sample_count = (encoded >> 34) & 0x3FFFFFFF;
@@ -254,7 +254,7 @@ igiari_fmod_fsb* igiari_fmod_fsb_ReadFromPtr(char* ptr) {
     fsb->samples = malloc(sizeof(igiari_fmod_fsb_sample));
     fsb->sample_count = 0;
 
-    printf("reading %i samples\n", fsb->header.sample_count);
+    printf("[igiari, fsb] Reading %i samples\n", fsb->header.sample_count);
     for (int i = 0; i < fsb->header.sample_count; i++)
     {
         igiari_fmod_fsb_sample_metadata* metadata = &fsb->header.samples[i];
@@ -272,7 +272,7 @@ igiari_fmod_fsb* igiari_fmod_fsb_ReadFromPtr(char* ptr) {
         //ptr = start + first_byte_of_sample;
         //printf("%i == %i\n", last_byte_of_sample - first_byte_of_sample, fsb->header.data_size);
         ptr = start + fsb->header.header_size + fsb->header.name_table_size + fsb->header.sample_headers_size;
-        printf("offset: %i\n", fsb->header.data_size);
+        //printf("offset: %i\n", fsb->header.data_size);
 
         sample.sample_bytes = malloc(fsb->header.data_size);
         memcpy(sample.sample_bytes, ptr, fsb->header.data_size); ptr += fsb->header.data_size;

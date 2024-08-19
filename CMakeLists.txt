@@ -3,36 +3,36 @@ project(igiari)
 
 # Generate compile_commands.json
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/debug)
-
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -O3")
-
-find_library(VORBIS_LIBRARY vorbis)
-find_library(VORBISFILE_LIBRARY vorbisfile)
-find_library(OGG_LIBRARY ogg)
 
 # Define source files
 set(SOURCE_FILES
+    # Utils
     src/utils/lz4.c
     src/utils/unicode.c
     src/utils/reader.c
 
-    # FMOD
+    # FMOD - .fsb
     src/assets/fmod/fsb.c
     src/assets/fmod/rebuild.c
 
-    # Unity (2017.4)
+    # Unity (2017.4) asset files - .unity3d
     src/assets/unity/texture2d.c
     src/assets/unity/audio_clip.c
     src/assets/unity/serialized_file.c
     src/assets/unity/bundle.c
     
+    # Phoenix Wright: Ace Attorney Trilogy asset files - .mdt
+    src/assets/pwaat/mdt.c
+    
+    # Engine
     src/engine/camera.c
     src/engine/shader.c
     src/engine/texture.c
     src/engine/sprite.c
+    src/engine/audio.c
     src/engine/core.c
-
-    src/mdt.c
+    
     src/main.c
 )
 
@@ -49,8 +49,13 @@ if(WIN32)
 endif()
 
 target_link_libraries(${PROJECT_NAME}
+    -Wl,-Bstatic
     ogg
     vorbis
+    
+    -Wl,-Bdynamic
     SDL2main
     SDL2
+    
+    openal
 )

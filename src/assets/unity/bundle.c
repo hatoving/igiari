@@ -121,20 +121,20 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     int32_t node_count = igiari_utils_reader_ConvertUInt32_LEtoBE((*(int32_t*)data_ptr)); data_ptr += 4;
     //printf("[igiari, unity, bundle] Node count: %i\n", node_count);
 
-    bundle->directory_info = malloc(node_count * sizeof(igiari_unity_bundle_node));
+    bundle->directory_info = (igiari_unity_bundle_node**)malloc(node_count * sizeof(igiari_unity_bundle_node*));
     int dir_info_count = 0;
 
     bundle->directory_info_size = node_count;
     while (dir_info_count < node_count) {
-        igiari_unity_bundle_node dummy;
+        igiari_unity_bundle_node* dummy = (igiari_unity_bundle_node*)malloc(sizeof(igiari_unity_bundle_node));
 
-        dummy.offset = igiari_utils_reader_ConvertUInt64_LEtoBE((*(int64_t*)data_ptr)); data_ptr += 8;
-        dummy.size = igiari_utils_reader_ConvertUInt32_LEtoBE((*(int64_t*)data_ptr)); data_ptr += 8;
-        dummy.flags = igiari_utils_reader_ConvertUInt16_LEtoBE((*(uint32_t*)data_ptr)); data_ptr += 4;
+        dummy->offset = igiari_utils_reader_ConvertUInt64_LEtoBE((*(int64_t*)data_ptr)); data_ptr += 8;
+        dummy->size = igiari_utils_reader_ConvertUInt32_LEtoBE((*(int64_t*)data_ptr)); data_ptr += 8;
+        dummy->flags = igiari_utils_reader_ConvertUInt16_LEtoBE((*(uint32_t*)data_ptr)); data_ptr += 4;
 
         size_t bytes = 0;
-        dummy.path = igiari_utils_reader_ReadStringTilNull_FromPointer(data_ptr, &bytes); data_ptr += bytes;
-        //printf("[igiari, unity, bundle] Bundle path: %s, size: %i\n", dummy.path, dummy.size);
+        dummy->path = igiari_utils_reader_ReadStringTilNull_FromPointer(data_ptr, &bytes); data_ptr += bytes;
+        //printf("[igiari, unity, bundle] Bundle path: %s, size: %i\n", dummy->path, bytes);
 
         bundle->directory_info[dir_info_count] = dummy;
         dir_info_count++;
@@ -197,14 +197,14 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
 
 igiari_unity_bundle_node* igiari_unity_bundle_GetNodeByPath(igiari_unity_bundle* bundle, char* path) {
     for (int i = 0; i < bundle->directory_info_size; i++) {
-        if (strcmp(bundle->directory_info[i].path, path) >= 0) {
+        if (strcmp(bundle->directory_info[i]->path, path) >= 0) {
             //printf("[igiari, unity, bundle] Found bundle: %s\n", bundle->directory_info[i].path);
-            return &bundle->directory_info[i];
+            return bundle->directory_info[i];
         } else {
-            //printf("[igiari, unity, bundle] (%s [%i] != %s [%i]])\n", bundle->directory_info[i].path, strlen(bundle->directory_info[i].path), path, strlen(path));
+            //printf("[igiari, unity, bundle] (%s [%i] != %s [%i]])\n", bundle->directory_info[i]->path, strlen(bundle->directory_info[i]->path), path, strlen(path));
         }
     }
-    printf("[igiari, unity, bundle] Did not find bundle: %s\n", path);
+    printf("[igiari, unity, bundle] Did not find bundle: \"%s\"\n", path);
     return NULL;
 }
 
@@ -212,7 +212,7 @@ unsigned char* igiari_unity_bundle_GetNodeDataByPath(igiari_unity_bundle* bundle
     igiari_unity_bundle_node* node = igiari_unity_bundle_GetNodeByPath(bundle, path);
     unsigned char* data = malloc((bundle->uncompressed_data_len - node->offset));
     const char* ptr = bundle->uncompressed_data + node->offset;
-    memcpy(data, ptr, (bundle->uncompressed_data_len - bundle->directory_info[1].offset));
+    memcpy(data, ptr, (bundle->uncompressed_data_len - bundle->directory_info[1]->offset));
 
     return data;
 }

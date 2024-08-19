@@ -2,6 +2,7 @@
 #include "sprite.h"
 #include "core.h"
 
+#include <math.h>
 #include <stdlib.h>
 
 igiari_engine_sprite* igiari_engine_sprite_Create(float x, float y, float scale_x, float scale_y, float rotation, igiari_engine_texture* tex) {
@@ -40,6 +41,8 @@ igiari_engine_sprite* igiari_engine_sprite_Create(float x, float y, float scale_
     spr->y = y;
     spr->scale_x = scale_x;
     spr->scale_y = scale_y;
+    spr->width = tex->width;
+    spr->height = tex->height;
 
     spr->rotation = rotation;
     spr->texture = tex;
@@ -52,14 +55,14 @@ void igiari_engine_sprite_Draw(igiari_engine_sprite* spr, igiari_engine_shader* 
     glBindTexture(GL_TEXTURE_2D, spr->texture->id);
     glUniform1i(1, 0);
 
-    float* ortho = igiari_engine_2dcam_GetMatrix(-((float)IGIARI_ENGINE_TARGETSIZE_WIDTH / 2.0f), ((float)IGIARI_ENGINE_TARGETSIZE_WIDTH / 2.0f), -((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT / 2.0f), ((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT / 2.0f));
+    float* ortho = igiari_engine_2dcam_GetMatrix(-((float)IGIARI_ENGINE_TARGETSIZE_WIDTH) / 2.0f, ((float)IGIARI_ENGINE_TARGETSIZE_WIDTH) / 2.0f, -((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT) / 2.0f, ((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT) / 2.0f);
 
     GLuint projectionMatrixLocation = glGetUniformLocation(shader->program_id, "uProjectionMatrix");
     glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &ortho[0]);
 
     float matrix[16] = {
-        (float)spr->texture->width * spr->scale_x, 0.0f, 0.0f, 0.0f,
-        0.0f, -(float)spr->texture->height * spr->scale_y, 0.0f, 0.0f,
+        ((float)spr->width * spr->scale_x) * cos(spr->rotation), (-(float)spr->width * spr->scale_x) * sin(spr->rotation), 0.0f, 0.0f,
+        (-(float)spr->height * spr->scale_y) * sin(spr->rotation), (-(float)spr->height * spr->scale_y) * cos(spr->rotation), 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
         spr->x, spr->y, 0.0f, 1.0f
     };

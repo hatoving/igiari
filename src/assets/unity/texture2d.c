@@ -47,8 +47,9 @@ igiari_unity_texture2d* igiari_unity_texture2d_ReadFromPtr(const char* ptr) {
 
     uint32_t string_len = *(uint32_t*)ptr; ptr += 4;
 
-    tex->info.path = malloc(string_len);
+    tex->info.path = malloc(string_len + 1);
     memcpy(tex->info.path, ptr, string_len); ptr += string_len;
+    tex->info.path[string_len] = '\0';
     //tex.info.path = igiari_utils_reader_ReadStringTilNull_FromPointer(ptr, &bytes_read); ptr += bytes_read;
 
     //printf("W/H: {%s}\n", tex.info.path);

@@ -11,6 +11,7 @@ typedef struct {
 
     float x, y;
     float scale_x, scale_y;
+    float width, height;
     float rotation;
 
     igiari_engine_texture* texture;

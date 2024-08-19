@@ -46,7 +46,7 @@ typedef struct {
     igiari_unity_bundle_storageblock* storage_blocks;
 
     int directory_info_size;
-    igiari_unity_bundle_node* directory_info;
+    igiari_unity_bundle_node** directory_info;
 
     int uncompressed_data_len;
     unsigned char* uncompressed_data;

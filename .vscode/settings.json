@@ -21,7 +21,10 @@
         "malloc.h": "c",
         "sprite.h": "c",
         "shader.h": "c",
-        "any": "c"
+        "any": "c",
+        "rebuild.h": "c",
+        "sdl_atomic.h": "c",
+        "sdl_error.h": "c"
     },
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "enabled"
 }
