@@ -23,6 +23,7 @@ This is not yet playable as of the time that I'm writing this. There's still a l
 - SDL2
 - SDL_Mixer_X
 - OpenGL ES 2.0
+- ImGUI
 
 # Libraries Used
 - LZ4
@@ -31,7 +32,7 @@ This is not yet playable as of the time that I'm writing this. There's still a l
 Everything else is coded in pure C.
 
 # Building (for Developers)
-Make sure you have `CMake`, `gcc`,`OpenGL`, `SDL2` and `SDL2_Mixer_X` already installed in your dev environment.
+Make sure you have `CMake`, `gcc`, `OpenGL`, `SDL2` and `SDL2_Mixer_X` already installed in your dev environment.
 Once you're sure, you can execute these commands to build the engine:
 ```
 mkdir build && cd build

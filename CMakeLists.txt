@@ -26,6 +26,7 @@ set(SOURCE_FILES
     src/assets/pwaat/mdt.c
     
     # Engine
+    src/engine/imgui.cpp
     src/engine/camera.c
     src/engine/shader.c
     src/engine/texture.c
@@ -53,6 +54,8 @@ target_link_libraries(${PROJECT_NAME}
     ogg
     vorbis
     vorbisfile
+    
+    imgui
     
     -Wl,-Bdynamic
     SDL2main
