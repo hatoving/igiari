@@ -9,13 +9,20 @@ Right now, work is being set on working on the remaster of the original trilogy.
 | Phoenix Wright: Ace Attorney Trilogy      | W.I.P.                | 0.00%     |
 | Apollo Justice: Ace Attorney Trilogy      | Not Planned (For now) | 0.00%     |
 
+# Goals
 
-# Warning
+- Have the entirety of Phoenix Wright: Ace Attorney Trilogy playable
+	- (While having the entirety of the first game being playable as a beta release)
+- Mod Support (custom textures, music, scenarios...) -- planned for way later!!
+- Have it released on multiple platforms (Windows, Linux, macOS, etc.)
+
+# Warning / For People Who Wanna Help
 This is not yet playable as of the time that I'm writing this. There's still a long way to go, but if you wanna add in some help then feel free to make a pull request or ask!
 
 # Dependecies
 - SDL2
 - OpenGL ES 2.0
+- OpenAL Soft
 
 # Libraries Used
 - LZ4
