@@ -115,9 +115,23 @@ char* igiari_unity_audioclip_GetOggFileFromClip(igiari_unity_audioclip* clip, in
     igiari_fmod_fsb* fsb = igiari_fmod_fsb_ReadFromPtr(ptr);
     
     int ogg_size = 0;
-    char* ogg_data = igiari_fmod_rebuild_vorbis_Convert(&fsb->samples[0], &ogg_size, loop_start, loop_end);
+    char* ogg_data = igiari_fmod_rebuild_vorbis_Convert(fsb->samples[0], &ogg_size, loop_start, loop_end);
     
+    igiari_fmod_fsb_Free(fsb);
     *size = ogg_size;
     
     return ogg_data;
+}
+
+void igiari_unity_texture2d_FreeAudioClip(igiari_unity_audioclip* clip) {
+    free(clip->data);
+    free(clip->name);
+    free(clip);
+}
+
+void igiari_unity_texture2d_FreeAudioClipArray(igiari_unity_audioclip** array, int size) {
+    for(int i = 0; i < size; i++) {
+        igiari_unity_texture2d_FreeAudioClip(array[i]);
+    }
+    free(array);
 }

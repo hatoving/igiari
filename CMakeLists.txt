@@ -11,6 +11,8 @@ set(SOURCE_FILES
     src/utils/lz4.c
     src/utils/unicode.c
     src/utils/reader.c
+    src/utils/dxt1.c
+    src/utils/dxt5.c
 
     # FMOD - .fsb
     src/assets/fmod/fsb.c

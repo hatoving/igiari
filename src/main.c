@@ -31,14 +31,20 @@ const char* VERTEX_SHADER_SRC = R"(
     layout (location = 1) in vec2 aTexCoord;
 
     uniform mat4 uProjectionMatrix;
+    uniform vec2 uTextureSize;
+    uniform vec4 uTexCoordOffset;
     uniform mat4 uModel;
 
-    varying vec2 v_texCoord;
+    out vec2 v_texCoord;
 
     void main()
     {
         gl_Position = uProjectionMatrix * uModel * aPosition;
-        v_texCoord = aTexCoord;
+
+        vec2 offset = uTexCoordOffset.xy / uTextureSize;
+        vec2 scale = uTexCoordOffset.zw / uTextureSize;
+
+        v_texCoord = aTexCoord * scale + offset;
     }
 )";
 
@@ -55,84 +61,168 @@ const char* FRAG_SHADER_SRC = R"(
     }
 )";
 
+igiari_engine_sprite* LoadSpriteFromUnityBundle(char* bundle_name, char* node_name, char* tex_name) {
+    igiari_engine_sprite* spr = NULL;
+    
+    igiari_unity_bundle* bundle = igiari_unity_bundle_Read(bundle_name);
+    if (!bundle) return NULL;
+    
+    int count = 0;
+    igiari_unity_texture2d** array = igiari_unity_texture2d_GetAllTexFromNode(bundle, node_name, &count);
+    if (!array || count == 0) {
+        igiari_unity_bundle_Free(bundle);
+        return NULL;
+    }
+    
+    igiari_unity_texture2d* tex = igiari_unity_texture2d_GetTexByName(array, count, tex_name);
+    if (tex) {
+        igiari_engine_texture* igiari_tex = igiari_engine_texture_LoadFromUnityAsset(tex);
+        spr = igiari_engine_sprite_Create(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, igiari_tex);
+    }
+    
+    igiari_unity_texture2d_FreeTexture2DArray(array, count);
+    igiari_unity_bundle_Free(bundle);
+    
+    return spr;
+}
+
+igiari_audio_music* LoadMusicFromUnityBundle(char* bundle_name, char* node_name, char* clip_name) {
+    igiari_audio_music* mus = NULL;
+    
+    igiari_unity_bundle* bundle = igiari_unity_bundle_Read(bundle_name);
+    if (!bundle) return NULL;
+    
+    int count = 0;
+    igiari_unity_audioclip** array = igiari_unity_audioclip_GetAllClipsFromNode(bundle, node_name, &count);
+    if (!array || count == 0) {
+        igiari_unity_bundle_Free(bundle);
+        return NULL;
+    }
+    
+    igiari_unity_audioclip* clip = igiari_unity_audioclip_GetClipByName(array, count, clip_name);
+    if (clip) {
+        mus = igiari_audio_CreateMusicFromAudioClip(clip);
+    }
+    
+    // Free resources, but only if not already handled by another function
+    igiari_unity_texture2d_FreeAudioClipArray(array, count);
+    igiari_unity_bundle_Free(bundle);
+    
+    return mus;
+}
+
 int main(int argc,char **argv) {
     igiari_engine_core_Initialize("igiari", 1280, 720, 1920, 1080, 60);
     igiari_imgui_CreateContext(IGIARI_ENGINE_SDLWINDOW, IGIARI_ENGINE_GLCONTEXT);
     
-    ImFont* debug_font = igiari_imgui_AddFontFromFileTTF("ARIAL.TTF", 20.0f, NULL, NULL);
-    ImFont* font = igiari_imgui_AddFontFromFileTTF("font.otf", 40.0f, NULL, NULL);
+    igiari_mdt mdt = igiari_mdt_Read("sc0_text_u.mdt.dec");
+
+    ImFont* font = igiari_imgui_AddFontFromFileTTF("font.otf", 45.0f, NULL, NULL);
     
-    igiari_unity_bundle* gs1_logo_bundle = igiari_unity_bundle_Read("titlegs1u.unity3d"); int game_bg_tex_count = 0;
-    igiari_unity_texture2d** gs1_logo_texarray = igiari_unity_texture2d_GetAllTexFromNode(gs1_logo_bundle, "CAB-1f36da66d6416727fb8d0b18cb649fae", &game_bg_tex_count);
-    igiari_unity_texture2d* gs1_logo_tex = igiari_unity_texture2d_GetTexByName(gs1_logo_texarray, game_bg_tex_count, "titleGS1u");
-
-    igiari_unity_bundle* bg_bundle = igiari_unity_bundle_Read("title_back.unity3d"); int bg_tex_count = 0;
-    igiari_unity_texture2d** bg_texarray = igiari_unity_texture2d_GetAllTexFromNode(bg_bundle, "CAB-ae9ba770903927e9f56b334635169106", &bg_tex_count);
-    igiari_unity_texture2d* bg_tex = igiari_unity_texture2d_GetTexByName(bg_texarray, bg_tex_count, "title_back");
-
-    free(gs1_logo_bundle);
-    free(gs1_logo_texarray);
-
+    igiari_engine_sprite* gs1_logo = LoadSpriteFromUnityBundle("titlegs1u.unity3d", "CAB-1f36da66d6416727fb8d0b18cb649fae", "titleGS1u");
+    gs1_logo->x = 1920.0f / 2.0f; gs1_logo->y = 1080.0f / 2.0f - 100.0f;
+    
+    igiari_engine_sprite* bg = LoadSpriteFromUnityBundle("title_back.unity3d", "CAB-ae9ba770903927e9f56b334635169106", "title_back");
+    bg->x = 1920.0f / 2.0f; bg->y = 1080.0f / 2.0f;
+    
+    igiari_engine_sprite* talk_bg = LoadSpriteFromUnityBundle("talk_bg.unity3d", "CAB-9599caae236daa67f158ca412c6c6480", "talk_bg");
+    talk_bg->x = 1920.0f / 2.0f; talk_bg->y = 1080.0f / 2.0f;
+	
+	igiari_engine_sprite* talk_bg_2 = LoadSpriteFromUnityBundle("menu_bg.unity3d", "CAB-328d4f82296c50ad6d8ed3ef246930c7", "menu_bg");
+    talk_bg_2->tex_x_offset = 0.0f; talk_bg_2->tex_y_offset = 40.0f; talk_bg_2->tex_w_offset = 1920.0f; talk_bg_2->tex_h_offset = 40.0f;
+    talk_bg_2->x = 1920.0f / 2.0f; talk_bg_2->y = 1080.0f / 2.0f; talk_bg_2->width = 1985; talk_bg_2->height = 40;
+    
+    igiari_engine_sprite* name_bg = LoadSpriteFromUnityBundle("name_bg.unity3d", "CAB-0716a8e7ded0114844f52a99c46c0dcf", "name_bg");
+    name_bg->x = 1920.0f / 2.0f; name_bg->y = 1080.0f / 2.0f;
+    
+    igiari_audio_music* bgm_source = LoadMusicFromUnityBundle("bgm200.unity3d", "CAB-b51dcfc932ed9c0b84264effd46acc63", "bgm200");
     igiari_engine_shader* shader = igiari_engine_shader_Create(VERTEX_SHADER_SRC, FRAG_SHADER_SRC);
-
-    igiari_engine_sprite* gs1_logo = igiari_engine_sprite_Create(0.0f, -80.0f, 1.0f, 1.0f, 0.0f, igiari_engine_texture_LoadFromUnityAsset(gs1_logo_tex));
-    igiari_engine_sprite* bg = igiari_engine_sprite_Create(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, igiari_engine_texture_LoadFromUnityAsset(bg_tex));
-
-    free(bg_tex);
-    free(bg_bundle);
-    free(bg_texarray);
-    free(gs1_logo_tex);
-
-    igiari_unity_bundle* bgm_bundle = igiari_unity_bundle_Read("bgm200.unity3d"); int mus_count = 0;
-    igiari_unity_audioclip** bgm_array = igiari_unity_audioclip_GetAllClipsFromNode(bgm_bundle, "CAB-b51dcfc932ed9c0b84264effd46acc63", &mus_count);
-    igiari_audio_music* bgm_source = igiari_audio_CreateMusicFromAudioClip(igiari_unity_audioclip_GetClipByName(bgm_array, mus_count, "bgm200"));
-
-    free(bgm_bundle);
-    free(bgm_array);
     
     Mix_PlayMusicStream(bgm_source->src, -1);
     //Mix_SetMusicPositionStream(bgm_source->src, bgm_source->loop_end - (double)6.0f);
     
+    float textbox_x = 0;
+    float textbox_y = 340;
     SDL_Event e;
     while(IGIARI_ENGINE_RUNNING)
     {
         igiari_engine_core_StartUpdate(&e);
 
         igiari_engine_core_StartRender();
-            igiari_engine_shader_Use(shader);
             igiari_engine_sprite_Draw(bg, shader);
             igiari_engine_sprite_Draw(gs1_logo, shader);
             
-            igiari_imgui_NewFrame();
+                talk_bg->y = (1080.0f / 2.0f) + textbox_y;
+				talk_bg_2->x = (1920.0f / 2.0f) + 1400.0f; talk_bg_2->y = (1080.0f / 2.0f) + 119.0f + textbox_y;
+                name_bg->x = (1920.0f / 2.0f) - 650.0f; name_bg->y = (1080.0f / 2.0f) + textbox_y - 133.0f;
+                
+                igiari_engine_sprite_Draw(talk_bg, shader);
+				igiari_engine_sprite_Draw(talk_bg_2, shader);
+                igiari_engine_sprite_Draw(name_bg, shader);
+                
+                float scale_x = ((float)IGIARI_ENGINE_VIEWPORT_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_WIDTH);
+                float scale_y = ((float)IGIARI_ENGINE_VIEWPORT_HEIGHT / (float)IGIARI_ENGINE_TARGETSIZE_HEIGHT);
+            
+                igiari_imgui_NewFrame();
+                
                 igiari_imgui_SetNextWindowBgAlpha(0.0f);
                 igiari_imgui_SetNextWindowPos(0.0f, 0.0f, 1 << 0, 0.0f, 0.0f);
                 igiari_imgui_SetNextWindowSize(
-                    (float)IGIARI_ENGINE_TARGETSIZE_WIDTH * ((float)IGIARI_ENGINE_WINDOW_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_WIDTH),
-                    (float)IGIARI_ENGINE_TARGETSIZE_HEIGHT * ((float)IGIARI_ENGINE_WINDOW_HEIGHT / (float)IGIARI_ENGINE_TARGETSIZE_HEIGHT),
+                    (float)IGIARI_ENGINE_WINDOW_WIDTH,
+                    (float)IGIARI_ENGINE_WINDOW_HEIGHT,
                     1 << 0
                 );
+                
                 igiari_imgui_Begin("##text", NULL, igiari_imgui_WindowFlags_NoTitleBar | igiari_imgui_WindowFlags_NoResize | igiari_imgui_WindowFlags_NoScrollbar | igiari_imgui_WindowFlags_NoMove | igiari_imgui_WindowFlags_NoCollapse);
                 //igiari_imgui_Begin("Phoenix", NULL, 0);
                     igiari_imgui_PushFont(font);
                     igiari_imgui_SetCursorPos(
-                        ((20.0f) * ((float)IGIARI_ENGINE_VIEWPORT_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_WIDTH)) + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        ((720.0f) * ((float)IGIARI_ENGINE_VIEWPORT_HEIGHT / (float)IGIARI_ENGINE_TARGETSIZE_HEIGHT)) + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
+                        (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
+                        (textbox_y + 450.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
                     );
-                    igiari_imgui_PushStyleColor(0, 255, 255, 255, 255); igiari_imgui_Text("I saw my ");
-                    igiari_imgui_SameLine(0.0f, 0.0f); igiari_imgui_PushStyleColor(0, 255, 0, 0, 255); igiari_imgui_Text("problems ");
-                    igiari_imgui_SameLine(0.0f, 0.0f); igiari_imgui_PushStyleColor(0, 255, 255, 255, 255); igiari_imgui_Text("and I'll see the night. ");
-                    igiari_imgui_SameLine(0.0f, 0.0f); igiari_imgui_PushStyleColor(0, 255, 255, 255, 255); igiari_imgui_PopStyleColor(); 
+                    igiari_imgui_PushStyleColor(0, 255, 255, 255, 255); igiari_imgui_Text("Be sure to pay attention to ");
+                    igiari_imgui_SetCursorPos(
+                        (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
+                        (textbox_y + 515.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
+                    );
+                    igiari_imgui_Text("any evidence added during ");
+                    igiari_imgui_SetCursorPos(
+                        (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
+                        (textbox_y + 580.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
+                    );
+                    igiari_imgui_Text("the trial.");
                     igiari_imgui_PopFont();
                     
-                    igiari_imgui_PushFont(debug_font);
-                    //igiari_imgui_Text("XOOOOOO");
-                    //igiari_imgui_PushFont(font);
-                    igiari_imgui_ShowDemoWindow(); 
+                    igiari_imgui_ChangeFontScale(font, 0.8f);
+                    igiari_imgui_PushFont(font);
+                    
+                    float text_width, text_height;
+                    text_width = igiari_imgui_ManualTextWidth("Phoenix");
+                    //text_width *= igiari_imgui_GetGlobalFontScale();
+                    //text_width = text_width * ((float)IGIARI_ENGINE_VIEWPORT_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_WIDTH) + IGIARI_ENGINE_VIEWPORT_OFFSET_X;
+                    igiari_imgui_SetCursorPos(
+                        (312.0f - (text_width * 0.5)) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
+                        (textbox_y + 390.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
+                    );
+                    
+                    igiari_imgui_TextUnformatted("Phoenix");
+                    igiari_imgui_ChangeFontScale(font, 1.0f);
                     igiari_imgui_PopFont();
+                    
                 igiari_imgui_End();
-            igiari_imgui_Render();
+                
+                igiari_imgui_SetNextWindowBgAlpha(0.5f);
+                igiari_imgui_SetNextWindowPos(
+                        (10.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
+                        (1070.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y,
+                        1 << 0,
+                        0.0f, 1.0f
+                    );
+                igiari_imgui_Begin("FPS", NULL, igiari_imgui_WindowFlags_NoTitleBar|igiari_imgui_WindowFlags_NoResize|igiari_imgui_WindowFlags_AlwaysAutoResize|igiari_imgui_WindowFlags_NoMove|igiari_imgui_WindowFlags_NoSavedSettings|igiari_imgui_WindowFlags_NoFocusOnAppearing|igiari_imgui_WindowFlags_NoNav);
+                    igiari_imgui_Text("FPS: %.2f", IGIARI_ENGINE_CURRENT_FPS);
+                igiari_imgui_End();
+        igiari_imgui_Render();
         igiari_engine_core_EndRender();
-
         igiari_engine_core_EndUpdate();
     
     }

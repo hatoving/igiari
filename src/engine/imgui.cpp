@@ -4,6 +4,9 @@
 #include <imgui/imgui_impl_sdl2.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include <cstdarg>
+#include <cstdio>
+
 #include "imgui.h"
 
 void igiari_imgui_CreateContext(SDL_Window* window, SDL_GLContext ctx) {
@@ -22,7 +25,10 @@ void igiari_imgui_CreateContext(SDL_Window* window, SDL_GLContext ctx) {
 	style.ItemSpacing.x = 12.0f;
 	style.Colors[ImGuiCol_NavHighlight] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
 	
-	io.Fonts->AddFontDefault();
+	ImGui::StyleColorsClassic();
+	
+	ImFont* default_f = io.Fonts->AddFontDefault();
+	default_f->Scale = 1.5f;
 	
 	ImGui_ImplSDL2_InitForOpenGL(window, ctx);
 	ImGui_ImplOpenGL3_Init("#version 100");
@@ -46,6 +52,34 @@ bool igiari_imgui_Begin(const char* name, bool* p_open, int flags) {
 void igiari_imgui_SetGlobalFontScale(float scale) {
 	ImGuiIO& io = ImGui::GetIO();
 	io.FontGlobalScale = scale;
+}
+
+float igiari_imgui_GetGlobalFontScale() {
+	ImGuiIO& io = ImGui::GetIO();
+	return io.FontGlobalScale;
+}
+
+void igiari_imgui_FontCalcTextSizeA(ImFont* font, char* text, float size, float wrap_width, float* width, float* height) {
+	ImVec2 s = font->CalcTextSizeA(size, FLT_MAX, wrap_width, text);
+	*width = s.x; *height = s.y;
+}
+
+float igiari_imgui_ManualTextWidth(const char* text) {
+    ImFont* font = ImGui::GetFont();
+    float fontScale = font->Scale;
+    float width = 0.0f;
+
+    const ImFontGlyph* glyph = nullptr;
+
+    for (const char* p = text; *p; ++p) {
+        glyph = font->FindGlyph(*p);
+        if (glyph) {
+            width += glyph->AdvanceX;
+        }
+    }
+
+    width *= fontScale;
+    return width;
 }
 
 void igiari_imgui_SetNextWindowBgAlpha(float alpha) {
@@ -75,14 +109,37 @@ void igiari_imgui_SetCursorPos(float x, float y) {
 	ImGui::SetCursorPos(ImVec2(x, y));
 }
 
+void igiari_imgui_SetCursorPosX(float x) {
+	ImGui::SetCursorPosX(x);
+}
+
+void igiari_imgui_SetCursorPosY(float y) {
+	ImGui::SetCursorPosY(y);
+}
+
 void igiari_imgui_Text(const char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	ImGui::TextV(fmt, args);
 	va_end(args);
 }
+
+
+void igiari_imgui_TextUnformatted(const char* fmt, ...) {
+    char buffer[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    va_end(args);
+    ImGui::TextUnformatted(buffer);
+}
+
 void igiari_imgui_SameLine(float offset_from_start_x, float spacing) {
 	ImGui::SameLine(offset_from_start_x, spacing);
+}
+void igiari_imgui_CalcTextSize(const char* label, const char* text_end, bool hide_text_after_double_hash, float wrap_width, float* width, float* height) {
+	ImVec2 size = ImGui::CalcTextSize(label, text_end, hide_text_after_double_hash, wrap_width);
+	*width = size.x; *height = size.y;
 }
 
 void igiari_imgui_PushFont(ImFont* font) {
@@ -105,6 +162,14 @@ ImFont* igiari_imgui_GetDefaultFont() {
 ImFont* igiari_imgui_AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg, const ImWchar* glyph_ranges) {
 	ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filename, size_pixels, font_cfg, glyph_ranges);
 	return font;
+}
+
+void igiari_imgui_ChangeFontScale(ImFont* font, float scale) {
+	font->Scale = scale;
+}
+
+void igiari_imgui_Dummy(float x, float y) {
+	ImGui::Dummy(ImVec2(x, y));
 }
 
 void igiari_imgui_DestroyContext() {

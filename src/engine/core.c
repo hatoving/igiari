@@ -24,6 +24,7 @@ int IGIARI_ENGINE_RUNNING = 0;
 int IGIARI_ENGINE_FULLSCREEN = 0;
 
 int IGIARI_ENGINE_FPS = 60;
+float IGIARI_ENGINE_CURRENT_FPS = 0.0f;
 
 float IGIARI_ENGINE_DELTA_TIME = 0.0f;
 float IGIARI_ENGINE_FRAME_START = 0.0f;
@@ -108,6 +109,12 @@ void igiari_engine_core_StartUpdate(SDL_Event* e) {
     IGIARI_ENGINE_DELTA_TIME = (IGIARI_ENGINE_FRAME_START - IGIARI_ENGINE_FRAME_END) / 1000.0f;
 
     IGIARI_ENGINE_FRAME_END = IGIARI_ENGINE_FRAME_START;
+    
+    if (IGIARI_ENGINE_DELTA_TIME > 0) {
+        IGIARI_ENGINE_CURRENT_FPS = 1.0f / IGIARI_ENGINE_DELTA_TIME;
+    } else {
+        IGIARI_ENGINE_CURRENT_FPS = 0.0;
+    }
 
     while(SDL_PollEvent(e)) {
         igiari_imgui_sdl2_ProcessEvent(e);

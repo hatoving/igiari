@@ -13,6 +13,9 @@ typedef struct {
     float scale_x, scale_y;
     float width, height;
     float rotation;
+    
+    float tex_x_offset, tex_y_offset;
+    float tex_w_offset, tex_h_offset;
 
     igiari_engine_texture* texture;
 } igiari_engine_sprite;

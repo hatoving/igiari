@@ -40,6 +40,7 @@ igiari_unity_texture2d* igiari_unity_texture2d_ReadFromPtr(const char* ptr);
 
 igiari_unity_texture2d** igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_bundle* bundle, char* path, int* tex_read);
 igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture2d** array, int size, char* name);
+void igiari_unity_texture2d_FreeTexture2DArray(igiari_unity_texture2d** array, int size);
 
 //Texture2D igiari_unity_texture2d_ConvertIntoRaylib(igiari_unity_texture2d* tex);
 

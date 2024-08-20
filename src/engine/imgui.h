@@ -64,23 +64,35 @@ bool igiari_imgui_sdl2_ProcessEvent(const SDL_Event* event);
 void igiari_imgui_ShowDemoWindow();
 
 void igiari_imgui_SetGlobalFontScale(float scale);
+float igiari_imgui_GetGlobalFontScale();
 
 void igiari_imgui_SetNextWindowBgAlpha(float alpha);
 void igiari_imgui_SetNextWindowPos(float x, float y, int cond, float pivot_x, float pivot_y);
 void igiari_imgui_SetNextWindowSize(float x, float y, int cond);
 
 void igiari_imgui_Text(const char* fmt, ...);
+void igiari_imgui_TextUnformatted(const char* fmt, ...);
 void igiari_imgui_SameLine(float offset_from_start_x, float spacing);
+void igiari_imgui_CalcTextSize(const char* label, const char* text_end, bool hide_text_after_double_hash, float wrap_width, float* width, float* height);
 
 void igiari_imgui_PushStyleColor(int idx, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 void igiari_imgui_PopStyleColor();
 
 void igiari_imgui_PushFont(ImFont* font);
+void igiari_imgui_ChangeFontScale(ImFont* font, float scale);
+void igiari_imgui_FontCalcTextSizeA(ImFont* font, char* text, float size, float wrap_width, float* width, float* height);
 void igiari_imgui_PopFont();
+
+float igiari_imgui_ManualTextWidth(const char* text);
+
+void igiari_imgui_Dummy(float x, float y);
 
 ImFont* igiari_imgui_GetDefaultFont();
 
 void igiari_imgui_SetCursorPos(float x, float y); 
+void igiari_imgui_SetCursorPosX(float x);
+void igiari_imgui_SetCursorPosY(float y); 
+
 ImFont* igiari_imgui_AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg, const ImWchar* glyph_ranges);
 
 #ifdef __cplusplus

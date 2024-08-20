@@ -9,6 +9,7 @@ typedef struct {
     int height;
 
     GLuint id;
+    char* data;
     int is_from_unity;
 } igiari_engine_texture;
 igiari_engine_texture* igiari_engine_texture_LoadFromUnityAsset(igiari_unity_texture2d* tex);

@@ -27,7 +27,7 @@ typedef struct {
     uint64_t data_offset;
 
     int chunk_count;
-    igiari_fmod_fsb_sample_chunk* chunks;
+    igiari_fmod_fsb_sample_chunk** chunks;
     int num_channels;
 
     uint8_t is_stereo;
@@ -51,7 +51,7 @@ typedef struct {
     int data_size;
 
     int sample_count;
-    igiari_fmod_fsb_sample_metadata* samples;
+    igiari_fmod_fsb_sample_metadata** samples;
 } igiari_fmod_fsb_header;
 
 typedef struct {
@@ -62,12 +62,13 @@ typedef struct {
 } igiari_fmod_fsb_sample;
 
 typedef struct {
-    igiari_fmod_fsb_header header;
+    igiari_fmod_fsb_header* header;
 
     int sample_count;
-    igiari_fmod_fsb_sample* samples;
+    igiari_fmod_fsb_sample** samples;
 } igiari_fmod_fsb;
 igiari_fmod_fsb* igiari_fmod_fsb_ReadFromPtr(char* ptr);
+void igiari_fmod_fsb_Free(igiari_fmod_fsb* fsb);
 
 int igiari_fmod_fsb_GetFreq(int freq_id);
 #endif

@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "sprite.h"
+#include "shader.h"
 #include "core.h"
 
 #include <math.h>
@@ -43,6 +44,11 @@ igiari_engine_sprite* igiari_engine_sprite_Create(float x, float y, float scale_
     spr->scale_y = scale_y;
     spr->width = tex->width;
     spr->height = tex->height;
+    
+    spr->tex_x_offset = 0.0f;
+    spr->tex_y_offset = 0.0f;
+    spr->tex_w_offset = (float)spr->width;
+    spr->tex_h_offset = (float)spr->height;
 
     spr->rotation = rotation;
     spr->texture = tex;
@@ -51,15 +57,28 @@ igiari_engine_sprite* igiari_engine_sprite_Create(float x, float y, float scale_
 }
 
 void igiari_engine_sprite_Draw(igiari_engine_sprite* spr, igiari_engine_shader* shader) {
+    igiari_engine_shader_Use(shader);
+    
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, spr->ebo);
     glBindTexture(GL_TEXTURE_2D, spr->texture->id);
     glUniform1i(1, 0);
 
-    float* ortho = igiari_engine_2dcam_GetMatrix(-((float)IGIARI_ENGINE_TARGETSIZE_WIDTH) / 2.0f, ((float)IGIARI_ENGINE_TARGETSIZE_WIDTH) / 2.0f, -((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT) / 2.0f, ((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT) / 2.0f);
+    float* ortho = igiari_engine_2dcam_GetMatrix(
+        0.0f,
+        ((float)IGIARI_ENGINE_TARGETSIZE_WIDTH),
+        0.0f,
+        ((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT)
+    );
 
     GLuint projectionMatrixLocation = glGetUniformLocation(shader->program_id, "uProjectionMatrix");
     glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &ortho[0]);
+    
+    GLuint textureSizeLocation = glGetUniformLocation(shader->program_id, "uTextureSize");
+    glUniform2f(textureSizeLocation, spr->texture->width, spr->texture->height);
 
+    GLuint textureOffsetLocation = glGetUniformLocation(shader->program_id, "uTexCoordOffset");
+    glUniform4f(textureOffsetLocation, spr->tex_x_offset, spr->tex_y_offset, spr->tex_w_offset, spr->tex_h_offset);
+    
     float matrix[16] = {
         ((float)spr->width * spr->scale_x) * cos(spr->rotation), (-(float)spr->width * spr->scale_x) * sin(spr->rotation), 0.0f, 0.0f,
         (-(float)spr->height * spr->scale_y) * sin(spr->rotation), (-(float)spr->height * spr->scale_y) * cos(spr->rotation), 0.0f, 0.0f,

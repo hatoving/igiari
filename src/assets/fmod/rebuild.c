@@ -138,8 +138,8 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
     igiari_fmod_chunk_vorbis* vorbis_chunk = NULL;
     for (int i = 0; i < sample->metadata->chunk_count; i++)
     {
-        if (sample->metadata->chunks[i].chunk_type == 0x16) {
-            vorbis_chunk = sample->metadata->chunks[i].chunk.vorbis;
+        if (sample->metadata->chunks[i]->chunk_type == 0x16) {
+            vorbis_chunk = sample->metadata->chunks[i]->chunk.vorbis;
         }
     }
     
@@ -162,9 +162,9 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
 
     for (int i = 0; i < sample->metadata->chunk_count; i++)
     {
-        if (sample->metadata->chunks[i].chunk_type == 6) {
-            *loop_start = sample->metadata->chunks[i].chunk.loop->loop_start;
-            *loop_end = sample->metadata->chunks[i].chunk.loop->loop_end;
+        if (sample->metadata->chunks[i]->chunk_type == 6) {
+            *loop_start = sample->metadata->chunks[i]->chunk.loop->loop_start;
+            *loop_end = sample->metadata->chunks[i]->chunk.loop->loop_end;
         }
     }
 

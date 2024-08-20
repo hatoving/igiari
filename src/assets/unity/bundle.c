@@ -195,6 +195,37 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     return bundle;
 }
 
+void igiari_unity_bundle_Free(igiari_unity_bundle* bundle) {
+    if (bundle == NULL) return;
+
+    // Free uncompressed data
+    if (bundle->uncompressed_data) {
+        free(bundle->uncompressed_data);
+        bundle->uncompressed_data = NULL;  // Clear the pointer to avoid double-free
+    }
+
+    // Free directory info entries
+    if (bundle->directory_info) {
+        for (int i = 0; i < bundle->directory_info_size; i++) {
+            if (bundle->directory_info[i]) {
+                free(bundle->directory_info[i]);
+                bundle->directory_info[i] = NULL;
+            }
+        }
+        free(bundle->directory_info);
+        bundle->directory_info = NULL;
+    }
+
+    // Free storage blocks
+    if (bundle->storage_blocks) {
+        free(bundle->storage_blocks);
+        bundle->storage_blocks = NULL;
+    }
+
+    // Free the bundle itself
+    free(bundle);
+}
+
 igiari_unity_bundle_node* igiari_unity_bundle_GetNodeByPath(igiari_unity_bundle* bundle, char* path) {
     for (int i = 0; i < bundle->directory_info_size; i++) {
         if (strcmp(bundle->directory_info[i]->path, path) >= 0) {

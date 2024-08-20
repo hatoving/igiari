@@ -52,6 +52,7 @@ typedef struct {
     unsigned char* uncompressed_data;
 } igiari_unity_bundle;
 igiari_unity_bundle* igiari_unity_bundle_Read(char* path);
+void igiari_unity_bundle_Free(igiari_unity_bundle* bundle);
 
 unsigned char* igiari_unity_bundle_GetNodeDataByPath(igiari_unity_bundle* bundle, char* path);
 igiari_unity_bundle_node* igiari_unity_bundle_GetNodeByPath(igiari_unity_bundle* bundle, char* path);
