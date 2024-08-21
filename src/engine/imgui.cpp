@@ -168,6 +168,10 @@ void igiari_imgui_ChangeFontScale(ImFont* font, float scale) {
 	font->Scale = scale;
 }
 
+void igiari_imgui_Image(int id, float w, float h) {
+	ImGui::Image((void*)(intptr_t)id, ImVec2(w, h));
+}
+
 void igiari_imgui_Dummy(float x, float y) {
 	ImGui::Dummy(ImVec2(x, y));
 }

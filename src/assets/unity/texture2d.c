@@ -112,11 +112,11 @@ igiari_unity_texture2d** igiari_unity_texture2d_GetAllTexFromNode(igiari_unity_b
 igiari_unity_texture2d* igiari_unity_texture2d_GetTexByName(igiari_unity_texture2d** array, int size, char* name) {
     for (int i = 0; i < size; i++) {
         if (strcmp(array[i]->name, name) >= 0) {
-            printf("[igiari, unity, tex2d] Found \"%s\"\n", array[i]->name);
+            //printf("[igiari, unity, tex2d] Found texture \"%s\"\n", array[i]->name);
             return array[i];
         }
     }
-    printf("[igiari, unity, tex2d] Didn't find \"%s\"\n", name);
+    printf("[igiari, unity, tex2d] Didn't find texture \"%s\"\n", name);
     return NULL;
 }
 

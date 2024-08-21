@@ -42,7 +42,7 @@ igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioc
 
 char* igiari_unity_audioclip_GetOggFileFromClip(igiari_unity_audioclip* clip, int* size, int* loop_start, int* loop_end);
 
-void igiari_unity_texture2d_FreeAudioClip(igiari_unity_audioclip* clip);
-void igiari_unity_texture2d_FreeAudioClipArray(igiari_unity_audioclip** array, int size);
+void igiari_unity_audioclip_FreeAudioClip(igiari_unity_audioclip* clip);
+void igiari_unity_audioclip_FreeAudioClipArray(igiari_unity_audioclip** array, int size);
 //Music igiari_unity_audioclip_ConvertIntoRaylib(igiari_unity_audioclip* clip);
 #endif

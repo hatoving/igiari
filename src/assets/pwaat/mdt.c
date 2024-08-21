@@ -160,7 +160,7 @@ igiari_mdt igiari_mdt_Read(char* path) {
             mdt.operations[op_size].text = string;
             mdt.operations[op_size].op = 0xFF;
 
-            printf("[igiari, mtd] OP: 0x%X, STRING: \"%s\"\n", mdt.operations[op_size].op, mdt.operations[op_size].args);
+            //printf("[igiari, mtd] OP: 0x%X, STRING: \"%s\"\n", mdt.operations[op_size].op, mdt.operations[op_size].args);
 
             op_size += 1;
 

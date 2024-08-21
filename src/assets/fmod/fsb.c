@@ -70,7 +70,7 @@ igiari_fmod_fsb_sample_chunk* igiari_fmod_fsb_impl_ReadChunkFromPtr(igiari_fmod_
             chunk->chunk.loop = malloc(sizeof(igiari_fmod_chunk_loop));
             chunk->chunk.loop->loop_start = *(uint32_t*)ptr; ptr += 4;
             chunk->chunk.loop->loop_end = *(uint32_t*)ptr; ptr += 4;
-            printf("[igiari, fsb] Loop points: {%i -- %i}\n", chunk->chunk.loop->loop_start, chunk->chunk.loop->loop_end);
+            //printf("[igiari, fsb] Loop points: {%i -- %i}\n", chunk->chunk.loop->loop_start, chunk->chunk.loop->loop_end);
             break;
 
         case 7: // dsp data
@@ -136,8 +136,6 @@ igiari_fmod_fsb_sample_metadata* igiari_fmod_fsb_impl_ReadMetadataFromPtr(char* 
 
     if (metadata->num_channels > 2) {
         printf("[igiari, fsb] WARNING: >2 channels not supported\n");
-    } else {
-        printf("[igiari, fsb] Channel count: %i\n", metadata->freq_id);
     }
 
     metadata->is_stereo = (metadata->num_channels == 2);
@@ -162,7 +160,7 @@ igiari_fmod_fsb_header* igiari_fmod_fsb_impl_ReadHeaderFromPtr(char* ptr, size_t
     header->magic[5] = '\0';
 
     if (strcmp(header->magic, "FSB5") < 0) {
-        printf("[igiari, fsb] Invalid header-> (%s)\n", header->magic);
+        printf("[igiari, fsb] Invalid header -> (%s)\n", header->magic);
     }
 
     header->version = *(uint32_t*)ptr; ptr += 4;
@@ -174,7 +172,7 @@ igiari_fmod_fsb_header* igiari_fmod_fsb_impl_ReadHeaderFromPtr(char* ptr, size_t
 
     ptr += 4; // should always be 0x1C
 
-    printf("[igiari, fsb] Audio type: %i\n", header->audio_type);
+    //printf("[igiari, fsb] Audio type: %i\n", header->audio_type);
 
     if (header->version == 0) {
         header->header_size = 0x40;
@@ -254,7 +252,7 @@ igiari_fmod_fsb* igiari_fmod_fsb_ReadFromPtr(char* ptr) {
     fsb->samples = (igiari_fmod_fsb_sample**)malloc(sizeof(igiari_fmod_fsb_sample*));
     fsb->sample_count = 0;
 
-    printf("[igiari, fsb] Reading %i samples\n", fsb->header->sample_count);
+    //printf("[igiari, fsb] Reading %i sample(s)\n", fsb->header->sample_count);
     for (int i = 0; i < fsb->header->sample_count; i++)
     {
         igiari_fmod_fsb_sample_metadata* metadata = fsb->header->samples[i];

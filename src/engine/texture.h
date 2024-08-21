@@ -12,6 +12,7 @@ typedef struct {
     char* data;
     int is_from_unity;
 } igiari_engine_texture;
+igiari_engine_texture* igiari_engine_texture_LoadFromPath(char* path);
 igiari_engine_texture* igiari_engine_texture_LoadFromUnityAsset(igiari_unity_texture2d* tex);
 
 #endif

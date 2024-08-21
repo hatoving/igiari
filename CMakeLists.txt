@@ -36,6 +36,8 @@ set(SOURCE_FILES
     src/engine/audio.c
     src/engine/core.c
     
+    src/games/trilogy/sound_data.c
+    
     src/main.c
 )
 

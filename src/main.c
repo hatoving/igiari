@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
+#include <math.h>
 #include <malloc.h>
 #include <stdint.h>
 
@@ -8,12 +8,12 @@
 #include <SDL2/SDL_mixer_ext.h>
 
 #include "assets/pwaat/mdt.h"
-#include "assets/fmod/rebuild.h"
 
-#include "assets/unity/serialized_file.h"
 #include "assets/unity/bundle.h"
 #include "assets/unity/audio_clip.h"
 #include "assets/unity/texture2d.h"
+
+#include "games/trilogy/sound_data.h"
 
 #include "utils/glad.h"
 
@@ -105,48 +105,91 @@ igiari_audio_music* LoadMusicFromUnityBundle(char* bundle_name, char* node_name,
     }
     
     // Free resources, but only if not already handled by another function
-    igiari_unity_texture2d_FreeAudioClipArray(array, count);
+    igiari_unity_audioclip_FreeAudioClipArray(array, count);
     igiari_unity_bundle_Free(bundle);
     
     return mus;
 }
 
+igiari_audio_se* LoadSEFromUnityBundle(char* bundle_name, char* node_name, char* clip_name) {
+    igiari_audio_se* se = NULL;
+    
+    igiari_unity_bundle* bundle = igiari_unity_bundle_Read(bundle_name);
+    if (!bundle) return NULL;
+    
+    int count = 0;
+    igiari_unity_audioclip** array = igiari_unity_audioclip_GetAllClipsFromNode(bundle, node_name, &count);
+    if (!array || count == 0) {
+        igiari_unity_bundle_Free(bundle);
+        return NULL;
+    }
+    
+    igiari_unity_audioclip* clip = igiari_unity_audioclip_GetClipByName(array, count, clip_name);
+    if (clip) {
+        se = igiari_audio_CreateSEFromAudioClip(clip);
+    }
+
+    igiari_unity_audioclip_FreeAudioClipArray(array, count);
+    igiari_unity_bundle_Free(bundle);
+    
+    return se;
+}
+
 int main(int argc,char **argv) {
     igiari_engine_core_Initialize("igiari", 1280, 720, 1920, 1080, 60);
-    igiari_imgui_CreateContext(IGIARI_ENGINE_SDLWINDOW, IGIARI_ENGINE_GLCONTEXT);
     
-    igiari_mdt mdt = igiari_mdt_Read("sc0_text_u.mdt.dec");
-
+    igiari_imgui_CreateContext(IGIARI_ENGINE_SDLWINDOW, IGIARI_ENGINE_GLCONTEXT);
     ImFont* font = igiari_imgui_AddFontFromFileTTF("font.otf", 45.0f, NULL, NULL);
     
-    igiari_engine_sprite* gs1_logo = LoadSpriteFromUnityBundle("titlegs1u.unity3d", "CAB-1f36da66d6416727fb8d0b18cb649fae", "titleGS1u");
+    igiari_engine_shader* shader = igiari_engine_shader_Create(VERTEX_SHADER_SRC, FRAG_SHADER_SRC);
+    igiari_mdt mdt = igiari_mdt_Read("sc0_text_u.mdt.dec");
+    
+    igiari_engine_sprite* gs1_logo = LoadSpriteFromUnityBundle("games/trilogy/GS1/BG/titlegs1u.unity3d", "CAB-1f36da66d6416727fb8d0b18cb649fae", "titleGS1u");
     gs1_logo->x = 1920.0f / 2.0f; gs1_logo->y = 1080.0f / 2.0f - 100.0f;
     
-    igiari_engine_sprite* bg = LoadSpriteFromUnityBundle("title_back.unity3d", "CAB-ae9ba770903927e9f56b334635169106", "title_back");
+    igiari_engine_sprite* bg = LoadSpriteFromUnityBundle("games/trilogy/menu/common/title_back.unity3d", "CAB-ae9ba770903927e9f56b334635169106", "title_back");
     bg->x = 1920.0f / 2.0f; bg->y = 1080.0f / 2.0f;
     
-    igiari_engine_sprite* talk_bg = LoadSpriteFromUnityBundle("talk_bg.unity3d", "CAB-9599caae236daa67f158ca412c6c6480", "talk_bg");
+    igiari_engine_sprite* talk_bg = LoadSpriteFromUnityBundle("games/trilogy/menu/common/talk_bg.unity3d", "CAB-9599caae236daa67f158ca412c6c6480", "talk_bg");
     talk_bg->x = 1920.0f / 2.0f; talk_bg->y = 1080.0f / 2.0f;
 	
-	igiari_engine_sprite* talk_bg_2 = LoadSpriteFromUnityBundle("menu_bg.unity3d", "CAB-328d4f82296c50ad6d8ed3ef246930c7", "menu_bg");
+	igiari_engine_sprite* talk_bg_2 = LoadSpriteFromUnityBundle("games/trilogy/menu/common/menu_bg.unity3d", "CAB-328d4f82296c50ad6d8ed3ef246930c7", "menu_bg");
     talk_bg_2->tex_x_offset = 0.0f; talk_bg_2->tex_y_offset = 40.0f; talk_bg_2->tex_w_offset = 1920.0f; talk_bg_2->tex_h_offset = 40.0f;
     talk_bg_2->x = 1920.0f / 2.0f; talk_bg_2->y = 1080.0f / 2.0f; talk_bg_2->width = 1985; talk_bg_2->height = 40;
     
-    igiari_engine_sprite* name_bg = LoadSpriteFromUnityBundle("name_bg.unity3d", "CAB-0716a8e7ded0114844f52a99c46c0dcf", "name_bg");
+    igiari_engine_sprite* name_bg = LoadSpriteFromUnityBundle("games/trilogy/menu/common/name_bg.unity3d", "CAB-0716a8e7ded0114844f52a99c46c0dcf", "name_bg");
     name_bg->x = 1920.0f / 2.0f; name_bg->y = 1080.0f / 2.0f;
+
+    igiari_trilogy_LoadSound(43, "games/trilogy/");
+    igiari_trilogy_LoadBGM(400, "games/trilogy/");
+
+    Mix_PlayMusicStream(igiari_trilogy_GetBGM(400)->src, -1);
     
-    igiari_audio_music* bgm_source = LoadMusicFromUnityBundle("bgm200.unity3d", "CAB-b51dcfc932ed9c0b84264effd46acc63", "bgm200");
-    igiari_engine_shader* shader = igiari_engine_shader_Create(VERTEX_SHADER_SRC, FRAG_SHADER_SRC);
-    
-    Mix_PlayMusicStream(bgm_source->src, -1);
-    //Mix_SetMusicPositionStream(bgm_source->src, bgm_source->loop_end - (double)6.0f);
-    
-    float textbox_x = 0;
     float textbox_y = 340;
+    bool play = false;
+    
     SDL_Event e;
     while(IGIARI_ENGINE_RUNNING)
     {
         igiari_engine_core_StartUpdate(&e);
+        
+        // Store previous keyboard state
+        Uint8 prevKeyboardState[SDL_NUM_SCANCODES];
+        memcpy(prevKeyboardState, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);
+
+        // In your game loop:
+        const Uint8* currentKeyboardState = SDL_GetKeyboardState(NULL);
+
+        for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
+            // Check if the key was pressed this frame (i.e., currently pressed but was not pressed last frame)
+            if (currentKeyboardState[SDL_SCANCODE_W] && !prevKeyboardState[SDL_SCANCODE_W]) {
+                Mix_PlayChannel(-1, igiari_trilogy_GetSound(43)->src, 0);
+                // Key `i` was just pressed
+            }
+        }
+
+        // Update the previous state
+        memcpy(prevKeyboardState, currentKeyboardState, SDL_NUM_SCANCODES);
 
         igiari_engine_core_StartRender();
             igiari_engine_sprite_Draw(bg, shader);
@@ -175,39 +218,60 @@ int main(int argc,char **argv) {
                 
                 igiari_imgui_Begin("##text", NULL, igiari_imgui_WindowFlags_NoTitleBar | igiari_imgui_WindowFlags_NoResize | igiari_imgui_WindowFlags_NoScrollbar | igiari_imgui_WindowFlags_NoMove | igiari_imgui_WindowFlags_NoCollapse);
                 //igiari_imgui_Begin("Phoenix", NULL, 0);
+                    igiari_imgui_ChangeFontScale(font, 1.0f);   
                     igiari_imgui_PushFont(font);
                     igiari_imgui_SetCursorPos(
                         (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
                         (textbox_y + 450.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
                     );
-                    igiari_imgui_PushStyleColor(0, 255, 255, 255, 255); igiari_imgui_Text("Be sure to pay attention to ");
+                    igiari_imgui_PushStyleColor(0, 255, 255, 255, 255); igiari_imgui_Text("Be sure to pay attention to");
+                    //igiari_imgui_SameLine(0.0f, -1.0f); igiari_imgui_Image(test_button->texture->id, test_button->width * 1.5f, test_button->height * 1.5f);
                     igiari_imgui_SetCursorPos(
                         (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
                         (textbox_y + 515.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
                     );
-                    igiari_imgui_Text("any evidence added during ");
+                    igiari_imgui_Text("any evidence added during");
                     igiari_imgui_SetCursorPos(
                         (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
                         (textbox_y + 580.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
                     );
                     igiari_imgui_Text("the trial.");
-                    igiari_imgui_PopFont();
+                    igiari_imgui_PopStyleColor(); igiari_imgui_PopFont();
                     
                     igiari_imgui_ChangeFontScale(font, 0.8f);
                     igiari_imgui_PushFont(font);
                     
-                    float text_width, text_height;
+                    float text_width;
                     text_width = igiari_imgui_ManualTextWidth("Phoenix");
                     //text_width *= igiari_imgui_GetGlobalFontScale();
                     //text_width = text_width * ((float)IGIARI_ENGINE_VIEWPORT_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_WIDTH) + IGIARI_ENGINE_VIEWPORT_OFFSET_X;
                     igiari_imgui_SetCursorPos(
                         (312.0f - (text_width * 0.5)) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        (textbox_y + 390.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
+                        (textbox_y + 389.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
                     );
                     
                     igiari_imgui_TextUnformatted("Phoenix");
-                    igiari_imgui_ChangeFontScale(font, 1.0f);
                     igiari_imgui_PopFont();
+                    
+                    igiari_imgui_ChangeFontScale(font, 0.5f);
+                    igiari_imgui_PushFont(font);
+                    
+                    igiari_imgui_PushStyleColor(0, 0, 0, 0, 255);
+                    igiari_imgui_SetCursorPos(
+                        (1440.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
+                        (textbox_y + 647.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
+                    );
+                    igiari_imgui_Text("[Esc] Options");
+                    text_width = igiari_imgui_ManualTextWidth("[Tab] Court Record");
+                    igiari_imgui_SetCursorPos(
+                        (1980.0f - text_width - 85.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
+                        (textbox_y + 647.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
+                    );
+                    igiari_imgui_Text("[Tab] Court Record");
+                    igiari_imgui_PopStyleColor();
+                    
+                    igiari_imgui_PopFont();
+                    igiari_imgui_ChangeFontScale(font, 1.0f);
                     
                 igiari_imgui_End();
                 
@@ -219,7 +283,7 @@ int main(int argc,char **argv) {
                         0.0f, 1.0f
                     );
                 igiari_imgui_Begin("FPS", NULL, igiari_imgui_WindowFlags_NoTitleBar|igiari_imgui_WindowFlags_NoResize|igiari_imgui_WindowFlags_AlwaysAutoResize|igiari_imgui_WindowFlags_NoMove|igiari_imgui_WindowFlags_NoSavedSettings|igiari_imgui_WindowFlags_NoFocusOnAppearing|igiari_imgui_WindowFlags_NoNav);
-                    igiari_imgui_Text("FPS: %.2f", IGIARI_ENGINE_CURRENT_FPS);
+                    igiari_imgui_Text("FPS: %i", (int)floor(IGIARI_ENGINE_CURRENT_FPS));
                 igiari_imgui_End();
         igiari_imgui_Render();
         igiari_engine_core_EndRender();

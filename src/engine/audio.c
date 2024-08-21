@@ -18,7 +18,8 @@ int igiari_audio_Initialize() {
 		printf("[igiari, audio] Failed to initialize SDL_mixer.\n");
 	}
 	
-	Mix_AllocateChannels(52);
+	Mix_AllocateChannels(16);
+	Mix_Volume(-1, 80);
 	
 	return 0;
 }
@@ -30,7 +31,7 @@ igiari_audio_music* igiari_audio_CreateMusicFromAudioClip(igiari_unity_audioclip
 }
 
 igiari_audio_music* igiari_audio_CreateMusicFromData(void* data, size_t len, float loop_start, float loop_end) {
-	printf("[igiari, audio] Loading data... (%i bytes, %f-%f)\n", len, loop_start, loop_end);
+	//printf("[igiari, audio] Loading data... (%i bytes, %f-%f)\n", len, loop_start, loop_end);
 	igiari_audio_music* igiari_music = (igiari_audio_music*)malloc(sizeof(igiari_audio_music));
 	
 	SDL_RWops* rw = SDL_RWFromMem(data, len);
@@ -43,8 +44,21 @@ igiari_audio_music* igiari_audio_CreateMusicFromData(void* data, size_t len, flo
 	return igiari_music;
 }
 
-void igiari_audio_PlayMusic(igiari_audio_music* music) {
+igiari_audio_se* igiari_audio_CreateSEFromAudioClip(igiari_unity_audioclip* clip) {
+	int size, loop_start, loop_end;
+	char* data = igiari_unity_audioclip_GetOggFileFromClip(clip, &size, &loop_start, &loop_end);
+	return igiari_audio_CreateSEFromData(data, size);
+}
+
+igiari_audio_se* igiari_audio_CreateSEFromData(void* data, size_t len) {
+	//printf("[igiari, audio] Loading data... (%i bytes)\n", len);
+	igiari_audio_se* igiari_se = (igiari_audio_se*)malloc(sizeof(igiari_audio_se));
 	
+	SDL_RWops* rw = SDL_RWFromMem(data, len);
+	Mix_Chunk* sdl_chunk = Mix_LoadWAV_RW(rw, 1);
+	
+	igiari_se->src = sdl_chunk;
+	return igiari_se;
 }
 
 void igiari_audio_Quit() {

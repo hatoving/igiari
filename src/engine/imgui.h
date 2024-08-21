@@ -91,7 +91,9 @@ ImFont* igiari_imgui_GetDefaultFont();
 
 void igiari_imgui_SetCursorPos(float x, float y); 
 void igiari_imgui_SetCursorPosX(float x);
-void igiari_imgui_SetCursorPosY(float y); 
+void igiari_imgui_SetCursorPosY(float y);
+
+void igiari_imgui_Image(int id, float w, float h);
 
 ImFont* igiari_imgui_AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg, const ImWchar* glyph_ranges);
 

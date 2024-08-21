@@ -37,7 +37,7 @@ ogg_packet igiari_fmod_rebuild_vorbis_BuildInfoPacket(int blocksize_short, int b
 
     oggpack_write(&buf, 1, 1);  // Framing flag
 
-    printf("[igiari, fmod, rebulid] Channels: %u, Frequency: %u\n", channels, freq);
+    //printf("[igiari, fmod, rebulid] Channels: %u, Frequency: %u\n", channels, freq);
     //printf("Blocksize Short: %d (log2: %d), Blocksize Long: %d (log2: %d)\n", blocksize_short, log2_short, blocksize_long, log2_long);
 
     packet.bytes = oggpack_bytes(&buf);
@@ -154,7 +154,7 @@ char* igiari_fmod_rebuild_vorbis_Convert(igiari_fmod_fsb_sample* sample, int* si
     {
         if (igiari_fmod_rebuild_vorbisheaders[i].crc32 == vorbis_chunk->crc32) {
             header = &igiari_fmod_rebuild_vorbisheaders[i];
-            printf("[igiari, fmod, rebulid] Found header! (%i == %i)\n", igiari_fmod_rebuild_vorbisheaders[i].crc32, vorbis_chunk->crc32);
+            //printf("[igiari, fmod, rebulid] Found header! (%i == %i)\n", igiari_fmod_rebuild_vorbisheaders[i].crc32, vorbis_chunk->crc32);
         }
     }
     

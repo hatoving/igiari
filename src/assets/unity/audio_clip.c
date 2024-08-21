@@ -13,6 +13,7 @@ igiari_unity_audioclip* igiari_unity_audioclip_ReadFromPtr(igiari_unity_bundle* 
     if (bundle->header.unity_ver->major >= 5) {
         clip->load_type = *(int32_t*)ptr; ptr += 4;
         clip->channels = *(int32_t*)ptr; ptr += 4;
+        //printf("[igiari, unity, audclp] name: %i\n", clip->channels);
         clip->freq = *(int32_t*)ptr; ptr += 4;
         clip->bits_per_sample = *(int32_t*)ptr; ptr += 4;
         clip->length = *(float*)ptr; ptr += 4;
@@ -60,20 +61,19 @@ igiari_unity_audioclip** igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity
     int object_count = 0;
     igiari_unity_objectinfo* object_infos = igiari_unity_serializedfile_GetAllObjectsOfType(&file, 83, &object_count); // 83 == AudioClip
 
-    const char* starting_ptr = igiari_unity_bundle_GetNodeDataByPath(bundle, path);
+    const char* starting_ptr = bundle->uncompressed_data;
     const char* ptr = 0;
 
     for (int i = 0; i < object_count; i++)
     {
         igiari_unity_audioclip* clip = (igiari_unity_audioclip*)malloc(sizeof(igiari_unity_audioclip));
-
+        //printf("version!!!: %i\n", object_infos[i].byte_start);
         ptr = starting_ptr + object_infos[i].byte_start;
         uint32_t string_len = *(uint32_t*)ptr; ptr += 4;
 
         char* name = (char*)malloc(string_len + 1);
         memcpy(name, ptr, string_len); ptr += string_len;
         name[string_len] = '\0';
-       // printf("[igiari, unity, audclp] name: %s\n", name);
 
         uintptr_t addr = (uintptr_t)ptr;
         addr = (addr + 3) & ~((uintptr_t)3);
@@ -101,12 +101,13 @@ igiari_unity_audioclip** igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity
 
 igiari_unity_audioclip* igiari_unity_audioclip_GetClipByName(igiari_unity_audioclip** array, int size, char* name) {
     for (int i = 0; i < size; i++) {
+        //printf("[igiari, unity, clip] Found \"%s\"\n", array[i]->name);
         if (strcmp(array[i]->name, name) >= 0) {
-            printf("[igiari, unity, tex2d] Found \"%s\"\n", array[i]->name);
+            //printf("[igiari, unity, tex2d] Found \"%s\"\n", array[i]->name);
             return array[i];
         }
     }
-    printf("[igiari, unity, tex2d] Didn't find \"%s\"\n", name);
+    printf("[igiari, unity, clip] Didn't find audio clip \"%s\"\n", name);
     return NULL;
 }
 
@@ -123,15 +124,15 @@ char* igiari_unity_audioclip_GetOggFileFromClip(igiari_unity_audioclip* clip, in
     return ogg_data;
 }
 
-void igiari_unity_texture2d_FreeAudioClip(igiari_unity_audioclip* clip) {
+void igiari_unity_audioclip_FreeAudioClip(igiari_unity_audioclip* clip) {
     free(clip->data);
     free(clip->name);
     free(clip);
 }
 
-void igiari_unity_texture2d_FreeAudioClipArray(igiari_unity_audioclip** array, int size) {
+void igiari_unity_audioclip_FreeAudioClipArray(igiari_unity_audioclip** array, int size) {
     for(int i = 0; i < size; i++) {
-        igiari_unity_texture2d_FreeAudioClip(array[i]);
+        igiari_unity_audioclip_FreeAudioClip(array[i]);
     }
     free(array);
 }

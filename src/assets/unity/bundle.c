@@ -47,13 +47,12 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     bundle->header.signature = igiari_utils_reader_ReadStringTilNull(bundle_file);
     bundle->header.version = igiari_utils_reader_ReadUInt32_BE(bundle_file);
 
-    //printf("[igiari, unity, bundle] Version: %i\n", bundle->header.version);
-
     bundle->header.unity_rev = igiari_utils_reader_ReadStringTilNull(bundle_file);
     char* ver = igiari_utils_reader_ReadStringTilNull(bundle_file);
 
     //bundle->header.unity_ver = malloc(sizeof(igiari_unity_version));
     bundle->header.unity_ver = split_version(ver);
+    //printf("[igiari, unity, bundle] Loading bundle (\"%s\", %i.%i.%i%c%i)\n", path, bundle->header.unity_ver->major, bundle->header.unity_ver->minor, bundle->header.unity_ver->revision, bundle->header.unity_ver->type_char, bundle->header.unity_ver->type_num);
 
     //printf("[igiari, unity, bundle] Unity version: (%i.%i.%i%c%i)\n", ver, bundle->header.unity_ver->major, bundle->header.unity_ver->minor, bundle->header.unity_ver->revision, bundle->header.unity_ver->type_char, bundle->header.unity_ver->type_num);
 
@@ -75,7 +74,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
     }
 
     int compression_type = (bundle->header.archive_flags & 0x3f);
-    printf("[igiari, unity, bundle] Compression type: %i\n", compression_type);
+    //printf("[igiari, unity, bundle] Compression type: %i\n", compression_type);
 
     unsigned char* uncompressed_block_info_bytes = (char*)malloc(bundle->header.uncompressed_blocks_info_size);
 
@@ -88,7 +87,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
                 free(uncompressed_block_info_bytes);
                 return bundle;
             } else {
-                printf("[igiari, unity, bundle] LZ4: Succesfully decompressed data. %i\n", result);
+                //printf("[igiari, unity, bundle] LZ4: Succesfully decompressed data. %i\n", result);
             }
             free(block_info_bytes);
             break;
