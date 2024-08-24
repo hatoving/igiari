@@ -1,0 +1,7 @@
+#ifndef IGIARI_SHADERS_SPRITE_H
+#define IGIARI_SHADERS_SPRITE_H
+
+extern const char* IGIARI_SHADERS_SPRITE_VERT;
+extern const char* IGIARI_SHADERS_SPRITE_FRAG;
+
+#endif

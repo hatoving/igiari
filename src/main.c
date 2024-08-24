@@ -13,7 +13,11 @@
 #include "assets/unity/audio_clip.h"
 #include "assets/unity/texture2d.h"
 
+#include "games/effects.h"
+#include "games/trilogy/textbox.h"
 #include "games/trilogy/sound_data.h"
+
+#include "games/shaders/sprite.h"
 
 #include "utils/glad.h"
 
@@ -24,42 +28,6 @@
 #include "engine/audio.h"
 #include "engine/imgui.h"
 #include "engine/core.h"
-
-const char* VERTEX_SHADER_SRC = R"(
-    #version 330 core
-    layout (location = 0) in vec4 aPosition;
-    layout (location = 1) in vec2 aTexCoord;
-
-    uniform mat4 uProjectionMatrix;
-    uniform vec2 uTextureSize;
-    uniform vec4 uTexCoordOffset;
-    uniform mat4 uModel;
-
-    out vec2 v_texCoord;
-
-    void main()
-    {
-        gl_Position = uProjectionMatrix * uModel * aPosition;
-
-        vec2 offset = uTexCoordOffset.xy / uTextureSize;
-        vec2 scale = uTexCoordOffset.zw / uTextureSize;
-
-        v_texCoord = aTexCoord * scale + offset;
-    }
-)";
-
-const char* FRAG_SHADER_SRC = R"(
-    #version 330 core
-    out vec4 FragColor;
-
-    varying vec2 v_texCoord;
-    uniform sampler2D u_texture;
-
-    void main()
-    {
-        gl_FragColor = texture(u_texture, v_texCoord);
-    }
-)";
 
 igiari_engine_sprite* LoadSpriteFromUnityBundle(char* bundle_name, char* node_name, char* tex_name) {
     igiari_engine_sprite* spr = NULL;
@@ -141,11 +109,8 @@ int main(int argc,char **argv) {
     igiari_imgui_CreateContext(IGIARI_ENGINE_SDLWINDOW, IGIARI_ENGINE_GLCONTEXT);
     ImFont* font = igiari_imgui_AddFontFromFileTTF("font.otf", 45.0f, NULL, NULL);
     
-    igiari_engine_shader* shader = igiari_engine_shader_Create(VERTEX_SHADER_SRC, FRAG_SHADER_SRC);
+    igiari_engine_shader* shader = igiari_engine_shader_Create(IGIARI_SHADERS_SPRITE_VERT, IGIARI_SHADERS_SPRITE_FRAG);
     igiari_mdt mdt = igiari_mdt_Read("sc0_text_u.mdt.dec");
-    
-    igiari_engine_sprite* gs1_logo = LoadSpriteFromUnityBundle("games/trilogy/GS1/BG/titlegs1u.unity3d", "CAB-1f36da66d6416727fb8d0b18cb649fae", "titleGS1u");
-    gs1_logo->x = 1920.0f / 2.0f; gs1_logo->y = 1080.0f / 2.0f - 100.0f;
     
     igiari_engine_sprite* bg = LoadSpriteFromUnityBundle("games/trilogy/menu/common/title_back.unity3d", "CAB-ae9ba770903927e9f56b334635169106", "title_back");
     bg->x = 1920.0f / 2.0f; bg->y = 1080.0f / 2.0f;
@@ -161,9 +126,7 @@ int main(int argc,char **argv) {
     name_bg->x = 1920.0f / 2.0f; name_bg->y = 1080.0f / 2.0f;
 
     igiari_trilogy_LoadSound(43, "games/trilogy/");
-    igiari_trilogy_LoadBGM(400, "games/trilogy/");
-
-    Mix_PlayMusicStream(igiari_trilogy_GetBGM(400)->src, -1);
+    igiari_trilogy_LoadBGM(23, "games/trilogy/");
     
     float textbox_y = 340;
     bool play = false;
@@ -173,28 +136,17 @@ int main(int argc,char **argv) {
     {
         igiari_engine_core_StartUpdate(&e);
         
-        // Store previous keyboard state
-        Uint8 prevKeyboardState[SDL_NUM_SCANCODES];
-        memcpy(prevKeyboardState, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);
-
-        // In your game loop:
         const Uint8* currentKeyboardState = SDL_GetKeyboardState(NULL);
-
-        for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
-            // Check if the key was pressed this frame (i.e., currently pressed but was not pressed last frame)
-            if (currentKeyboardState[SDL_SCANCODE_W] && !prevKeyboardState[SDL_SCANCODE_W]) {
-                Mix_PlayChannel(-1, igiari_trilogy_GetSound(43)->src, 0);
-                // Key `i` was just pressed
-            }
+        if (currentKeyboardState[SDL_SCANCODE_W] && !play) {
+            play = true;
+            igiari_trilogy_textbox_Init(mdt.operations, 200);
+            //igiari_trilogy_effects_Perform(IGIARI_TRILOGY_EFFECTS_SHAKE);
         }
-
-        // Update the previous state
-        memcpy(prevKeyboardState, currentKeyboardState, SDL_NUM_SCANCODES);
+        
+        igiari_trilogy_textbox_Update(1.0f / 60.0f);
+        igiari_trilogy_effects_Update();
 
         igiari_engine_core_StartRender();
-            igiari_engine_sprite_Draw(bg, shader);
-            igiari_engine_sprite_Draw(gs1_logo, shader);
-            
                 talk_bg->y = (1080.0f / 2.0f) + textbox_y;
 				talk_bg_2->x = (1920.0f / 2.0f) + 1400.0f; talk_bg_2->y = (1080.0f / 2.0f) + 119.0f + textbox_y;
                 name_bg->x = (1920.0f / 2.0f) - 650.0f; name_bg->y = (1080.0f / 2.0f) + textbox_y - 133.0f;
@@ -218,60 +170,9 @@ int main(int argc,char **argv) {
                 
                 igiari_imgui_Begin("##text", NULL, igiari_imgui_WindowFlags_NoTitleBar | igiari_imgui_WindowFlags_NoResize | igiari_imgui_WindowFlags_NoScrollbar | igiari_imgui_WindowFlags_NoMove | igiari_imgui_WindowFlags_NoCollapse);
                 //igiari_imgui_Begin("Phoenix", NULL, 0);
-                    igiari_imgui_ChangeFontScale(font, 1.0f);   
-                    igiari_imgui_PushFont(font);
-                    igiari_imgui_SetCursorPos(
-                        (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        (textbox_y + 450.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
-                    );
-                    igiari_imgui_PushStyleColor(0, 255, 255, 255, 255); igiari_imgui_Text("Be sure to pay attention to");
-                    //igiari_imgui_SameLine(0.0f, -1.0f); igiari_imgui_Image(test_button->texture->id, test_button->width * 1.5f, test_button->height * 1.5f);
-                    igiari_imgui_SetCursorPos(
-                        (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        (textbox_y + 515.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
-                    );
-                    igiari_imgui_Text("any evidence added during");
-                    igiari_imgui_SetCursorPos(
-                        (380.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        (textbox_y + 580.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
-                    );
-                    igiari_imgui_Text("the trial.");
-                    igiari_imgui_PopStyleColor(); igiari_imgui_PopFont();
+                    igiari_trilogy_textbox_Render(font);
+                    igiari_trilogy_effects_Render();
                     
-                    igiari_imgui_ChangeFontScale(font, 0.8f);
-                    igiari_imgui_PushFont(font);
-                    
-                    float text_width;
-                    text_width = igiari_imgui_ManualTextWidth("Phoenix");
-                    //text_width *= igiari_imgui_GetGlobalFontScale();
-                    //text_width = text_width * ((float)IGIARI_ENGINE_VIEWPORT_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_WIDTH) + IGIARI_ENGINE_VIEWPORT_OFFSET_X;
-                    igiari_imgui_SetCursorPos(
-                        (312.0f - (text_width * 0.5)) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        (textbox_y + 389.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
-                    );
-                    
-                    igiari_imgui_TextUnformatted("Phoenix");
-                    igiari_imgui_PopFont();
-                    
-                    igiari_imgui_ChangeFontScale(font, 0.5f);
-                    igiari_imgui_PushFont(font);
-                    
-                    igiari_imgui_PushStyleColor(0, 0, 0, 0, 255);
-                    igiari_imgui_SetCursorPos(
-                        (1440.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        (textbox_y + 647.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
-                    );
-                    igiari_imgui_Text("[Esc] Options");
-                    text_width = igiari_imgui_ManualTextWidth("[Tab] Court Record");
-                    igiari_imgui_SetCursorPos(
-                        (1980.0f - text_width - 85.0f) * scale_x + IGIARI_ENGINE_VIEWPORT_OFFSET_X,
-                        (textbox_y + 647.0f) * scale_y + IGIARI_ENGINE_VIEWPORT_OFFSET_Y
-                    );
-                    igiari_imgui_Text("[Tab] Court Record");
-                    igiari_imgui_PopStyleColor();
-                    
-                    igiari_imgui_PopFont();
-                    igiari_imgui_ChangeFontScale(font, 1.0f);
                     
                 igiari_imgui_End();
                 
@@ -283,7 +184,7 @@ int main(int argc,char **argv) {
                         0.0f, 1.0f
                     );
                 igiari_imgui_Begin("FPS", NULL, igiari_imgui_WindowFlags_NoTitleBar|igiari_imgui_WindowFlags_NoResize|igiari_imgui_WindowFlags_AlwaysAutoResize|igiari_imgui_WindowFlags_NoMove|igiari_imgui_WindowFlags_NoSavedSettings|igiari_imgui_WindowFlags_NoFocusOnAppearing|igiari_imgui_WindowFlags_NoNav);
-                    igiari_imgui_Text("FPS: %i", (int)floor(IGIARI_ENGINE_CURRENT_FPS));
+                    igiari_imgui_Text("FPS: %i", 0);
                 igiari_imgui_End();
         igiari_imgui_Render();
         igiari_engine_core_EndRender();

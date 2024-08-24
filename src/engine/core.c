@@ -24,12 +24,7 @@ int IGIARI_ENGINE_RUNNING = 0;
 int IGIARI_ENGINE_FULLSCREEN = 0;
 
 int IGIARI_ENGINE_FPS = 60;
-float IGIARI_ENGINE_CURRENT_FPS = 0.0f;
-
-float IGIARI_ENGINE_DELTA_TIME = 0.0f;
-float IGIARI_ENGINE_FRAME_START = 0.0f;
-float IGIARI_ENGINE_FRAME_END = 0.0f;
-double IGIARI_ENGINE_FRAME_DURATION = 0.0f;
+igiari_engine_2dcam* IGIARI_ENGINE_CAMERA2D = NULL;
 
 void igiari_engine_core_impl_Letterbox(int width, int height) {
     float target_aspect_ratio = (float)IGIARI_ENGINE_TARGETSIZE_WIDTH / (float)IGIARI_ENGINE_TARGETSIZE_HEIGHT;
@@ -93,29 +88,17 @@ void igiari_engine_core_Initialize(char* title, int window_width, int window_hei
     IGIARI_ENGINE_FULLSCREEN = 0;
 
     IGIARI_ENGINE_FPS = fps;
-    IGIARI_ENGINE_FRAME_DURATION = 1000.0f / (double)IGIARI_ENGINE_FPS;
-
-    IGIARI_ENGINE_FRAME_END = SDL_GetTicks();
     
     IGIARI_ENGINE_TARGETSIZE_WIDTH = target_width;
     IGIARI_ENGINE_TARGETSIZE_HEIGHT = target_height;
     
     IGIARI_ENGINE_WINDOW_WIDTH = window_width;
     IGIARI_ENGINE_WINDOW_HEIGHT = window_height;
+    
+    IGIARI_ENGINE_CAMERA2D = igiari_engine_2dcam_Create(0.0f, 0.0f, 1.0f);
 }
 
 void igiari_engine_core_StartUpdate(SDL_Event* e) {
-    IGIARI_ENGINE_FRAME_START = SDL_GetTicks();
-    IGIARI_ENGINE_DELTA_TIME = (IGIARI_ENGINE_FRAME_START - IGIARI_ENGINE_FRAME_END) / 1000.0f;
-
-    IGIARI_ENGINE_FRAME_END = IGIARI_ENGINE_FRAME_START;
-    
-    if (IGIARI_ENGINE_DELTA_TIME > 0) {
-        IGIARI_ENGINE_CURRENT_FPS = 1.0f / IGIARI_ENGINE_DELTA_TIME;
-    } else {
-        IGIARI_ENGINE_CURRENT_FPS = 0.0;
-    }
-
     while(SDL_PollEvent(e)) {
         igiari_imgui_sdl2_ProcessEvent(e);
         if(e->type == SDL_QUIT)
@@ -143,10 +126,6 @@ void igiari_engine_core_StartUpdate(SDL_Event* e) {
 }
 
 void igiari_engine_core_EndUpdate() {
-    uint32_t frame_time = SDL_GetTicks() - IGIARI_ENGINE_FRAME_START;
-    if (IGIARI_ENGINE_FRAME_DURATION > frame_time) {
-        SDL_Delay(IGIARI_ENGINE_FRAME_DURATION - frame_time);
-    }
 }
 
 void igiari_engine_core_StartRender() {

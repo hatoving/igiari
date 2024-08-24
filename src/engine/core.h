@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include "../utils/glad.h"
 
+#include "camera.h"
+
 extern SDL_Window* IGIARI_ENGINE_SDLWINDOW;
 extern SDL_GLContext IGIARI_ENGINE_GLCONTEXT;
 
@@ -22,15 +24,12 @@ extern int IGIARI_ENGINE_RUNNING;
 extern int IGIARI_ENGINE_FULLSCREEN;
 
 extern int IGIARI_ENGINE_FPS;
-extern float IGIARI_ENGINE_CURRENT_FPS;
-extern float IGIARI_ENGINE_DELTA_TIME;
-extern float IGIARI_ENGINE_FRAME_START;
-extern float IGIARI_ENGINE_FRAME_END;
-extern double IGIARI_ENGINE_FRAME_DURATION;
+extern igiari_engine_2dcam* IGIARI_ENGINE_CAMERA2D;
 
 void igiari_engine_core_Initialize(char* title, int window_width, int window_height, int target_width, int target_height, int fps);
 
 void igiari_engine_core_StartUpdate(SDL_Event* e);
+void igiari_engine_core_Update();
 void igiari_engine_core_EndUpdate();
 
 void igiari_engine_core_StartRender();

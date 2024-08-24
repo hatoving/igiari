@@ -5,8 +5,8 @@
 
 typedef struct {
     uint16_t op;
-    uint16_t* args;
-    char* text;
+    uint16_t args[4];
+    char* character;
 } igiari_mdt_op;
 
 typedef struct {

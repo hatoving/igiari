@@ -5,8 +5,9 @@
 
 typedef struct {
     float zoom;
-    int x, y;
+    float x, y;
 } igiari_engine_2dcam;
+igiari_engine_2dcam* igiari_engine_2dcam_Create(float x, float y, float zoom);
 float* igiari_engine_2dcam_GetMatrix(float left, float right, float top, float bottom);
 
 #endif

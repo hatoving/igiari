@@ -1,0 +1,7 @@
+#ifndef IGIARI_SHADERS_BASIC_H
+#define IGIARI_SHADERS_BASIC_H
+
+extern const char* IGIARI_SHADERS_BASIC_VERT;
+extern const char* IGIARI_SHADERS_BASIC_FRAG;
+
+#endif

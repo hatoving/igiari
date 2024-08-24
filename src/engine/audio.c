@@ -19,7 +19,7 @@ int igiari_audio_Initialize() {
 	}
 	
 	Mix_AllocateChannels(16);
-	Mix_Volume(-1, 80);
+	Mix_Volume(-1, MIX_MAX_VOLUME / 2);
 	
 	return 0;
 }

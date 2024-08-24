@@ -159,7 +159,7 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
                 combined_block_data_count += bundle->storage_blocks[i].uncompressed_size;
 
                 free(block_data);
-                //printf("[igiari, unity, bundle] Found unsupported compression mode: %i\n", (bundle->storage_blocks[i].flags & 0x3F));
+                //
                 break;
             }
             case 3: { //Lz4HC
@@ -184,6 +184,9 @@ igiari_unity_bundle* igiari_unity_bundle_Read(char* path) {
                 free(uncompressed_data);
                 break;
             }
+            default:
+                printf("[igiari, unity, bundle] Found unsupported compression mode: %i\n", (bundle->storage_blocks[i].flags & 0x3F));
+                break;
         }
     }
 

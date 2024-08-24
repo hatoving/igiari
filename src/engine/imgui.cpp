@@ -1,6 +1,7 @@
 #include "../utils/glad.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <imgui/imgui_impl_sdl2.h>
 #include <imgui/imgui_impl_opengl3.h>
 
@@ -43,6 +44,14 @@ void igiari_imgui_NewFrame() {
 void igiari_imgui_Render() {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+unsigned int igiari_imgui_COL32(int r, int g, int b, int a) {
+	return IM_COL32(r, g, b, a);
+}
+
+unsigned int igiari_imgui_Color(float r, float g, float b, float a) {
+	return ImColor(r, g, b, a);
 }
 
 bool igiari_imgui_Begin(const char* name, bool* p_open, int flags) {
@@ -166,6 +175,20 @@ ImFont* igiari_imgui_AddFontFromFileTTF(const char* filename, float size_pixels,
 
 void igiari_imgui_ChangeFontScale(ImFont* font, float scale) {
 	font->Scale = scale;
+}
+
+ImDrawList* igiari_imgui_GetWindowDrawList() {
+	return ImGui::GetCurrentWindow()->DrawList;
+}
+
+void igiari_imgui_DrawListPathClear(ImDrawList* draw_list) {
+	draw_list->PathClear();
+}
+void igiari_imgui_AddRectToDrawList(ImDrawList* draw_list, float x1, float y1, float x2, float y2, uint32_t color, float rounding, int flags, float thickness) {
+	draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), (ImU32)color, rounding, flags, thickness);
+}
+void igiari_imgui_AddRectFilledToDrawList(ImDrawList* draw_list, float x1, float y1, float x2, float y2, uint32_t color, float rounding, int flags) {
+	draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), (ImU32)color, rounding, (ImDrawFlags)flags);
 }
 
 void igiari_imgui_Image(int id, float w, float h) {

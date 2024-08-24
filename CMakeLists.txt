@@ -3,7 +3,7 @@ project(igiari)
 
 # Generate compile_commands.json
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/debug)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -O3 -g")
 
 # Define source files
 set(SOURCE_FILES
@@ -36,7 +36,13 @@ set(SOURCE_FILES
     src/engine/audio.c
     src/engine/core.c
     
+    src/games/shaders/sprite.c
+    src/games/shaders/basic.c
+    
+    src/games/effects.c
+    
     src/games/trilogy/sound_data.c
+    src/games/trilogy/textbox.c
     
     src/main.c
 )

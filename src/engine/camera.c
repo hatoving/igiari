@@ -1,6 +1,16 @@
 #include "camera.h"
 #include <stdlib.h>
 
+igiari_engine_2dcam* igiari_engine_2dcam_Create(float x, float y, float zoom) {
+    igiari_engine_2dcam* cam = (igiari_engine_2dcam*)malloc(sizeof(igiari_engine_2dcam));
+    
+    cam->x = x;
+    cam->y = y;
+    cam->zoom = zoom;
+    
+    return cam;
+}
+
 float* igiari_engine_2dcam_GetMatrix(float left, float right, float top, float bottom) {
     float* result = (float*)malloc(16 * sizeof(float));
 

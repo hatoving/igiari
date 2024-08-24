@@ -12,6 +12,7 @@ typedef struct {
     float x, y;
     float scale_x, scale_y;
     float width, height;
+    float r, g, b, a;
     float rotation;
     
     float tex_x_offset, tex_y_offset;

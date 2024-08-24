@@ -81,7 +81,7 @@ igiari_unity_audioclip** igiari_unity_audioclip_GetAllClipsFromNode(igiari_unity
 
         clip = igiari_unity_audioclip_ReadFromPtr(bundle, ptr);
 
-        //printf("path: %s\n", clip.info.path);
+        //printf("path: %s\n", clip->info.path);
 
         ptr = bundle->uncompressed_data + (igiari_unity_bundle_GetNodeByPath(bundle, igiari_unity_bundle_impl_GetFileNameOfPath(clip->info.path))->offset + clip->info.offset);
 

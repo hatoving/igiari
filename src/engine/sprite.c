@@ -49,6 +49,8 @@ igiari_engine_sprite* igiari_engine_sprite_Create(float x, float y, float scale_
     spr->tex_y_offset = 0.0f;
     spr->tex_w_offset = (float)spr->width;
     spr->tex_h_offset = (float)spr->height;
+    
+    spr->r = spr->g = spr->b = spr->a = 1.0f;
 
     spr->rotation = rotation;
     spr->texture = tex;
@@ -64,10 +66,10 @@ void igiari_engine_sprite_Draw(igiari_engine_sprite* spr, igiari_engine_shader* 
     glUniform1i(1, 0);
 
     float* ortho = igiari_engine_2dcam_GetMatrix(
-        0.0f,
-        ((float)IGIARI_ENGINE_TARGETSIZE_WIDTH),
-        0.0f,
-        ((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT)
+        IGIARI_ENGINE_CAMERA2D->x,
+        ((float)IGIARI_ENGINE_TARGETSIZE_WIDTH) + IGIARI_ENGINE_CAMERA2D->x,
+        IGIARI_ENGINE_CAMERA2D->y,
+        ((float)IGIARI_ENGINE_TARGETSIZE_HEIGHT) + IGIARI_ENGINE_CAMERA2D->y
     );
 
     GLuint projectionMatrixLocation = glGetUniformLocation(shader->program_id, "uProjectionMatrix");
@@ -87,6 +89,8 @@ void igiari_engine_sprite_Draw(igiari_engine_sprite* spr, igiari_engine_shader* 
     };
     unsigned int transform_loc = glGetUniformLocation(shader->program_id, "uModel");
     glUniformMatrix4fv(transform_loc, 1, GL_FALSE, matrix);
+    
+    glUniform4f(glGetUniformLocation(shader->program_id, "uTintColor"), spr->r, spr->g, spr->b, spr->a);
     
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

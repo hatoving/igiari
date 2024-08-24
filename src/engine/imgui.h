@@ -9,13 +9,17 @@ extern "C" {
 #endif
 
 typedef struct ImVec2 ImVec2;
+typedef struct ImColor ImColor;
 typedef struct ImFont ImFont;
+typedef struct ImDrawList ImDrawList;
 typedef struct ImFontConfig ImFontConfig;
 typedef unsigned int ImWchar32;
 typedef unsigned short ImWchar16;
 typedef ImWchar16 ImWchar;
 
+struct ImColor;
 struct ImFont;
+struct ImDrawList;
 struct ImFontConfig;
 
 typedef enum {
@@ -60,6 +64,9 @@ void igiari_imgui_Render();
 bool igiari_imgui_Begin(const char* name, bool* p_open, int flags);
 void igiari_imgui_End();
 
+unsigned int igiari_imgui_COL32(int r, int g, int b, int a);
+unsigned int igiari_imgui_Color(float r, float g, float b, float a);
+
 bool igiari_imgui_sdl2_ProcessEvent(const SDL_Event* event);
 void igiari_imgui_ShowDemoWindow();
 
@@ -84,7 +91,6 @@ void igiari_imgui_FontCalcTextSizeA(ImFont* font, char* text, float size, float 
 void igiari_imgui_PopFont();
 
 float igiari_imgui_ManualTextWidth(const char* text);
-
 void igiari_imgui_Dummy(float x, float y);
 
 ImFont* igiari_imgui_GetDefaultFont();
@@ -92,6 +98,12 @@ ImFont* igiari_imgui_GetDefaultFont();
 void igiari_imgui_SetCursorPos(float x, float y); 
 void igiari_imgui_SetCursorPosX(float x);
 void igiari_imgui_SetCursorPosY(float y);
+
+ImDrawList* igiari_imgui_GetWindowDrawList();
+void igiari_imgui_DrawListPathClear(ImDrawList* draw_list);
+
+void igiari_imgui_AddRectToDrawList(ImDrawList* draw_list, float x1, float y1, float x2, float y2, unsigned int color, float rounding, int flags, float thickness);
+void igiari_imgui_AddRectFilledToDrawList(ImDrawList* draw_list, float x1, float y1, float x2, float y2, unsigned int color, float rounding, int flags);
 
 void igiari_imgui_Image(int id, float w, float h);
 
